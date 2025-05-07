@@ -94,11 +94,11 @@ const KandidatForm = ({ onSuccess }) => {
       const formDataObj = new FormData();
 
       // Tambahkan semua field teks
-      formDataObj.append("designType", formData.designType);
       formDataObj.append("nameKetua", formData.nameKetua);
       formDataObj.append("nameWakil", formData.nameWakil);
       formDataObj.append("visi", formData.visi);
       formDataObj.append("misi", formData.misi);
+      formDataObj.append("designType", formData.designType);
 
       // Tambahkan file sesuai dengan designType
       if (formData.designType === "combined") {
@@ -146,8 +146,8 @@ const KandidatForm = ({ onSuccess }) => {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            "Design-Type": formData.designType, // Menambahkan design type di header
           },
-          // Tambahkan timeout untuk mencegah menunggu terlalu lama
           timeout: 15000,
         }
       );

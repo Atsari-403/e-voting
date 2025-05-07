@@ -1,7 +1,7 @@
 // routes/candidate.js
 const express = require("express");
 const router = express.Router();
-const multer = require("multer"); // Pastikan multer diimpor!
+const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const candidateController = require("../controllers/candidateController");
@@ -34,14 +34,14 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Upload middleware untuk single file
+// Upload middleware untuk single file (pamflet)
 const uploadSingle = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 }).single("fotoPamflet");
 
-// Upload middleware untuk multiple files
+// Upload middleware untuk multiple files (foto ketua dan wakil)
 const uploadMultiple = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -61,53 +61,43 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
-// Middleware untuk menangani upload file berdasarkan designType
+// Middleware untuk upload yang lebih sederhana, dipilih berdasarkan header design-type
 const handleUpload = (req, res, next) => {
-  // Multer untuk parsing formdata digunakan di sini
-  const preParser = multer().none();
+  const designType = req.headers["design-type"];
 
-  preParser(req, res, (err) => {
-    if (err) {
-      return res
-        .status(400)
-        .json({ message: "Error parsing form data: " + err.message });
-    }
+  if (!designType) {
+    return res
+      .status(400)
+      .json({ message: "Design type diperlukan dalam header" });
+  }
 
-    console.log("Request body after pre-parsing:", req.body);
-    const designType = req.body.designType;
+  console.log("Processing design type:", designType);
 
-    if (!designType) {
-      return res.status(400).json({ message: "Design type diperlukan" });
-    }
-
-    if (designType === "combined") {
-      console.log("Processing combined design type");
-      uploadSingle(req, res, (err) => {
-        if (err) {
-          console.error("Upload error (combined):", err);
-          return res
-            .status(400)
-            .json({ message: "Error uploading pamflet: " + err.message });
-        }
-        console.log("File uploaded successfully (combined):", req.file);
-        next();
-      });
-    } else if (designType === "separate") {
-      console.log("Processing separate design type");
-      uploadMultiple(req, res, (err) => {
-        if (err) {
-          console.error("Upload error (separate):", err);
-          return res
-            .status(400)
-            .json({ message: "Error uploading photos: " + err.message });
-        }
-        console.log("Files uploaded successfully (separate):", req.files);
-        next();
-      });
-    } else {
-      return res.status(400).json({ message: "Design type tidak valid" });
-    }
-  });
+  if (designType === "combined") {
+    uploadSingle(req, res, (err) => {
+      if (err) {
+        console.error("Upload error (combined):", err);
+        return res
+          .status(400)
+          .json({ message: "Error uploading pamflet: " + err.message });
+      }
+      console.log("File uploaded successfully (combined):", req.file);
+      next();
+    });
+  } else if (designType === "separate") {
+    uploadMultiple(req, res, (err) => {
+      if (err) {
+        console.error("Upload error (separate):", err);
+        return res
+          .status(400)
+          .json({ message: "Error uploading photos: " + err.message });
+      }
+      console.log("Files uploaded successfully (separate):", req.files);
+      next();
+    });
+  } else {
+    return res.status(400).json({ message: "Design type tidak valid" });
+  }
 };
 
 // CRUD kandidat
@@ -115,7 +105,7 @@ router.get("/", candidateController.getAllCandidates);
 
 router.get("/:id", candidateController.getCandidateById);
 
-// POST dengan handling multiple upload
+// POST dengan handling file upload berdasarkan design type
 router.post(
   "/",
   authMiddleware.verifyToken,
@@ -124,7 +114,7 @@ router.post(
   candidateController.createCandidate
 );
 
-// PUT dengan handling multiple upload
+// PUT dengan handling file upload berdasarkan design type
 router.put(
   "/:id",
   authMiddleware.verifyToken,
