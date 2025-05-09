@@ -316,7 +316,6 @@ const ManajemenMahasiswa = () => {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
-            
           },
         }
       );
@@ -370,15 +369,35 @@ const ManajemenMahasiswa = () => {
 
   return (
     <AdminDashboardLayout>
-      <div className="space-y-6">
-        {/* Header dengan pencarian */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <User size={24} className="text-purple-600" />
-            Manajemen Mahasiswa
-          </h1>
+      <div className="space-y-4">
+        {/* Header dan Tombol Aksi dalam satu container */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          {/* Tombol Aksi */}
+          <div className="flex flex-col sm:flex-row gap-3 order-2 md:order-1">
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
+            >
+              <Plus size={16} /> Tambah Mahasiswa
+            </button>
 
-          <div className="relative">
+            <button
+              onClick={() => fileInputRef.current.click()}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
+            >
+              <Upload size={16} /> Upload Excel
+            </button>
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              ref={fileInputRef}
+              onChange={handleExcelUpload}
+              className="hidden"
+            />
+          </div>
+
+          {/* Search input */}
+          <div className="relative order-1 md:order-2">
             <input
               type="text"
               placeholder="Cari NIM atau nama..."
@@ -393,101 +412,74 @@ const ManajemenMahasiswa = () => {
           </div>
         </div>
 
-        {/* Tombol Aksi */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
-          >
-            <Plus size={16} /> Tambah Mahasiswa
-          </button>
-
-          {/* Tombol Upload Excel */}
-          <button
-            onClick={() => fileInputRef.current.click()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
-          >
-            <Upload size={16} /> Upload Excel
-          </button>
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            ref={fileInputRef}
-            onChange={handleExcelUpload}
-            className="hidden"
-          />
-        </div>
-
         {/* Tabel Mahasiswa */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            {isLoading ? (
-              <div className="flex justify-center items-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700"></div>
-              </div>
-            ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr className="text-left">
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      NIM
-                    </th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nama
-                    </th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Aksi
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredMahasiswas.length > 0 ? (
-                    filteredMahasiswas.map((mahasiswa) => (
-                      <tr key={mahasiswa.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {mahasiswa.nim}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {mahasiswa.name || "-"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex flex-col sm:flex-row gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedMahasiswa(mahasiswa);
-                              setShowEditModal(true);
-                            }}
-                            className="text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
-                          >
-                            <Edit3 size={16} /> Edit
-                          </button>
-                          <button
-                            onClick={() => {
-                              setDeleteUserId(mahasiswa.id);
-                              setShowDeleteModal(true);
-                            }}
-                            className="text-red-600 hover:text-red-800 flex items-center gap-1 transition-colors"
-                          >
-                            <Trash2 size={16} /> Hapus
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="3"
-                        className="px-6 py-4 text-center text-gray-500"
-                      >
-                        {searchTerm
-                          ? "Tidak ada mahasiswa yang sesuai dengan pencarian"
-                          : "Belum ada data mahasiswa"}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden mt-4">
+          {isLoading ? (
+            <div className="flex justify-center items-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700"></div>
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr className="text-left">
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    NIM
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nama
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredMahasiswas.length > 0 ? (
+                  filteredMahasiswas.map((mahasiswa) => (
+                    <tr key={mahasiswa.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {mahasiswa.nim}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {mahasiswa.name || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex flex-col sm:flex-row gap-2">
+                        <button
+                          onClick={() => {
+                            setSelectedMahasiswa(mahasiswa);
+                            setShowEditModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+                        >
+                          <Edit3 size={16} /> Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeleteUserId(mahasiswa.id);
+                            setShowDeleteModal(true);
+                          }}
+                          className="text-red-600 hover:text-red-800 flex items-center gap-1 transition-colors"
+                        >
+                          <Trash2 size={16} /> Hapus
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="3"
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
+                      {searchTerm
+                        ? "Tidak ada mahasiswa yang sesuai dengan pencarian"
+                        : "Belum ada data mahasiswa"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Modal Tambah Mahasiswa */}

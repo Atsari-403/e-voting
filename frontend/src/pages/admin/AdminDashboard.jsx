@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
-import { Activity, ArrowUp, Users, UserCheck, CheckSquare } from "lucide-react";
+import { Activity, ArrowUp, Users, UserCheck, CheckSquare, XSquare} from "lucide-react";
 import axios from "axios"; // Pastikan axios sudah diimport
 
 // Card Component
@@ -19,33 +19,33 @@ const DashboardCard = ({ title, value, icon, color }) => {
 };
 
 // Recent Activity Component
-const RecentActivity = ({ activities }) => {
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
-      <h2 className="font-medium text-lg mb-4">Aktivitas Terbaru</h2>
-      {activities.length > 0 ? (
-        <div className="space-y-4">
-          {activities.map((activity) => (
-            <div key={activity.id} className="flex items-start">
-              <div className="bg-purple-100 rounded-full p-2 mr-3">
-                <Activity size={16} className="text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm">
-                  <span className="font-medium">{activity.user}</span>{" "}
-                  {activity.action}
-                </p>
-                <p className="text-xs text-gray-500">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500 text-sm">Belum ada aktivitas terbaru</p>
-      )}
-    </div>
-  );
-};
+// const RecentActivity = ({ activities }) => {
+//   return (
+//     <div className="bg-white rounded-lg shadow-sm p-4">
+//       <h2 className="font-medium text-lg mb-4">Aktivitas Terbaru</h2>
+//       {activities.length > 0 ? (
+//         <div className="space-y-4">
+//           {activities.map((activity) => (
+//             <div key={activity.id} className="flex items-start">
+//               <div className="bg-purple-100 rounded-full p-2 mr-3">
+//                 <Activity size={16} className="text-purple-600" />
+//               </div>
+//               <div>
+//                 <p className="text-sm">
+//                   <span className="font-medium">{activity.user}</span>{" "}
+//                   {activity.action}
+//                 </p>
+//                 <p className="text-xs text-gray-500">{activity.time}</p>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       ) : (
+//         <p className="text-gray-500 text-sm">Belum ada aktivitas terbaru</p>
+//       )}
+//     </div>
+//   );
+// };
 
 // Top Candidates Component
 const TopCandidates = ({ candidates }) => {
@@ -110,77 +110,42 @@ const AdminDashboard = () => {
     // Fungsi untuk mengambil data dashboard
     const fetchDashboardData = async () => {
       try {
-        const mahasiswaResponse = await axios.get(
-          "http://localhost:5000/api/users",
-          {
+        const [mahasiswaResponse, kandidatResponse] = await Promise.all([
+          axios.get("http://localhost:5000/api/users", {
             withCredentials: true,
-          }
-        );
+          }),
+          axios.get("http://localhost:5000/api/candidates", {
+            withCredentials: true,
+          }),
+        ]);
 
         const mahasiswaList = mahasiswaResponse.data.filter(
           (user) => user?.nim && user.nim !== "mahasiswa"
         );
 
         const totalMahasiswa = mahasiswaList.length;
+        const kandidatList = kandidatResponse.data;
+
+        // Format kandidat data sesuai dengan struktur response API
+        const formattedCandidates = kandidatList.map((kandidat) => ({
+          id: kandidat.id,
+          name: `${kandidat.nameKetua} & ${kandidat.nameWakil}`,
+          votes: kandidat.jumlah_suara || 0,
+          percentage: (
+            ((kandidat.jumlah_suara || 0) / totalMahasiswa) *
+            100
+          ).toFixed(1),
+          trend: "up",
+        }));
 
         setStats({
           totalMahasiswa: totalMahasiswa,
-          totalKandidat: 0,
-          sudahVoting: 84,
-          partisipasi: "37,5%",
+          totalKandidat: kandidatList.length,
+          sudahVoting: 0,
+          belumVoting: 0,
         });
 
-        setActivities([
-          {
-            id: 1,
-            user: "Jefri Setiawan",
-            action: "melakukan voting",
-            time: "5 menit yang lalu",
-          },
-          {
-            id: 2,
-            user: "Admin",
-            action: "menambahkan kandidat baru",
-            time: "1 jam yang lalu",
-          },
-          {
-            id: 3,
-            user: "Siti Nurhayati",
-            action: "melakukan voting",
-            time: "2 jam yang lalu",
-          },
-          {
-            id: 4,
-            user: "Admin",
-            action: "mengubah pengaturan voting",
-            time: "1 hari yang lalu",
-          },
-        ]);
-
-        setCandidates([
-          {
-            id: 1,
-            name: "Ahmad Faisal",
-            votes: 20,
-            percentage: 45,
-            trend: "up",
-          },
-          {
-            id: 2,
-            name: "Dina Putri",
-            votes: 15,
-            percentage: 32,
-            trend: "up",
-          },
-          {
-            id: 3,
-            name: "Rudi Hermawan",
-            votes: 10,
-            percentage: 23,
-            trend: "down",
-          },
-        ]);
-
+        setCandidates(formattedCandidates);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -233,8 +198,6 @@ const AdminDashboard = () => {
   return (
     <AdminDashboardLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <DashboardCard
@@ -245,7 +208,7 @@ const AdminDashboard = () => {
           />
           <DashboardCard
             title="Total Kandidat"
-            value={stats.totalKandidat}
+            value={stats.totalKandidat.toLocaleString()}
             icon={<UserCheck size={24} className="text-green-500" />}
             color="bg-green-100"
           />
@@ -256,16 +219,16 @@ const AdminDashboard = () => {
             color="bg-purple-100"
           />
           <DashboardCard
-            title="Partisipasi"
-            value={stats.partisipasi}
-            icon={<Activity size={24} className="text-orange-500" />}
+            title="Belum Voting"
+            value={stats.belumVoting.toLocaleString()}
+            icon={<XSquare size={24} className="text-orange-500" />}
             color="bg-orange-100"
           />
         </div>
 
         {/* Two Column Layout for Activity and Candidates */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentActivity activities={activities} />
+          {/* <RecentActivity activities={activities} /> */}
           <TopCandidates candidates={candidates} />
         </div>
       </div>

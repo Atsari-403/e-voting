@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 import {
   Menu,
   X,
@@ -76,6 +77,7 @@ const AdminDashboardLayout = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useUser(); // Get user from context
 
   // Menu items configuration
   const menuItems = [
@@ -101,13 +103,7 @@ const AdminDashboardLayout = ({ children }) => {
       id: "hasil",
       text: "Hasil Voting",
       icon: <BarChart size={20} />,
-      path: "/hasil-voting",
-    },
-    {
-      id: "pengaturan",
-      text: "Pengaturan",
-      icon: <Settings size={20} />,
-      path: "/pengaturan",
+      path: "/hasil/voting",
     },
   ];
 
@@ -120,17 +116,21 @@ const AdminDashboardLayout = ({ children }) => {
     }
   }, [location.pathname]);
 
-  // Mock user data - dalam aplikasi nyata, ini akan diambil dari context atau state management
-  const user = {
-    name: "Admin E-Voting",
-    email: "admin@example.com",
-  };
+  const handleLogout = async () => {
+    try {
+      // Clear user data from context
+      updateUser(null);
 
-  const handleLogout = () => {
-    // Handle logout logic - hapus token dan redirect ke login
-    localStorage.removeItem("token");
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    navigate("/login");
+      // Clear localStorage and cookies
+      localStorage.removeItem("token");
+      document.cookie =
+        "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+      // Redirect to login
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const handleMenuClick = (item) => {
@@ -257,8 +257,8 @@ const AdminDashboardLayout = ({ children }) => {
               <Menu size={24} />
             </button>
 
-            {/* Page title - akan dinamis berdasarkan activeMenu */}
-            <h1 className="text-lg font-medium text-gray-800 md:ml-0">
+            {/* Page title dinamis berdasarkan activeMenu */}
+            <h1 className="text-lg font-bold text-black-400 md:ml-0">
               {menuItems.find((item) => item.id === activeMenu)?.text ||
                 "Dashboard"}
             </h1>
