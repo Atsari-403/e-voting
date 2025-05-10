@@ -49,10 +49,10 @@ export default function Login() {
           <div className="flex justify-center">
             <img src={Logo} className="h-24" alt="Logo ITICM" />
           </div>
-          <h2 className="mt-4 text-3xl font-bold text-gray-800">
+          <h2 className="mt-4 text-3xl font-bold text-black-800">
             Selamat Datang
           </h2>
-          <p className="mt-2 text-gray-600">Silahkan login untuk melanjutkan</p>
+          <p className="mt-2 text-black-400">Silahkan login untuk melanjutkan</p>
         </div>
 
         {error && (
@@ -66,7 +66,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="nim"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-black-500 mb-1"
               >
                 NIM
               </label>
@@ -74,7 +74,7 @@ export default function Login() {
                 id="nim"
                 type="text"
                 placeholder="Masukkan NIM"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition-colors"
                 value={nim}
                 onChange={(e) => setNim(e.target.value)}
                 required
@@ -84,7 +84,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-black-500 mb-1"
               >
                 Password
               </label>
@@ -93,7 +93,7 @@ export default function Login() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Masukkan password"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition-colors"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -138,14 +138,14 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-orange-300 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
+              className="w-full bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
             >
               Login
             </button>
           </div>
         </form>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-gray-600">
           &copy; {new Date().getFullYear()} Sistem E-Voting
         </div>
       </div>

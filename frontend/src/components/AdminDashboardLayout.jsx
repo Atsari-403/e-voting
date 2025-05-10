@@ -77,7 +77,7 @@ const AdminDashboardLayout = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser(); // Get user from context
+  const { user, updateUser } = useUser(); // Get user from context
 
   // Menu items configuration
   const menuItems = [
