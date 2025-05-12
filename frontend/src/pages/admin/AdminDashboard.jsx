@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
-import { Activity, ArrowUp, Users, UserCheck, CheckSquare } from "lucide-react";
+import { Activity, ArrowUp, Users, UserCheck, UserX } from "lucide-react";
 import axios from "axios"; // Pastikan axios sudah diimport
 
 // Card Component
@@ -252,13 +252,13 @@ const AdminDashboard = () => {
           <DashboardCard
             title="Sudah Voting"
             value={stats.sudahVoting.toLocaleString()}
-            icon={<CheckSquare size={24} className="text-purple-500" />}
+            icon={<UserCheck size={24} className="text-purple-500" />}
             color="bg-purple-100"
           />
           <DashboardCard
-            title="Partisipasi"
+            title="Belum Voting"
             value={stats.partisipasi}
-            icon={<Activity size={24} className="text-orange-500" />}
+            icon={<UserX size={24} className="text-orange-500" />}
             color="bg-orange-100"
           />
         </div>
