@@ -6,63 +6,61 @@ import ManajemenKandidat from "./pages/admin/ManajemenKandidat";
 import HasilVoting from "./pages/admin/HasilVoting";
 import MahasiswaVoting from "./pages/MahasiswaVoting";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   return (
-    <UserProvider>
-      <Routes>
-        {/* Redirect default */}
-        <Route path="/" element={<Navigate to="/login" />} />
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/login" element={<Login />} />
 
-        <Route path="/login" element={<Login />} />
+      {/* Admin routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute roleAllowed="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/manajemen/mahasiswa"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ManajemenMahasiswa />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/manajemen/mahasiswa"
-          element={
-            <ProtectedRoute roleAllowed="admin">
-              <ManajemenMahasiswa />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/manajemen/kandidat"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ManajemenKandidat />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/manajemen/kandidat"
-          element={
-            <ProtectedRoute roleAllowed="admin">
-              <ManajemenKandidat />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="hasil/voting"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <HasilVoting />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="hasil/voting"
-          element={
-            <ProtectedRoute roleAllowed="admin">
-              <HasilVoting />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/mahasiswa/voting"
-          element={
-            <ProtectedRoute roleAllowed="mahasiswa">
-              <MahasiswaVoting />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </UserProvider>
+      {/* Mahasiswa routes */}
+      <Route
+        path="/mahasiswa/voting"
+        element={
+          <ProtectedRoute allowedRoles={["mahasiswa"]}>
+            <MahasiswaVoting />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 

@@ -1,35 +1,44 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import UserContext from "../contexts/UserContext";
 import Logo from "../assets/Logo.png";
 import BgLogin from "../assets/bglogin.jpg";
+
 export default function Login() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useContext(UserContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nim, password }),
-    });
+    try {
+      const success = await login({ nim, password });
 
-    if (res.ok) {
-      const data = await res.json();
-      if (data.role === "admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/mahasiswa/voting");
+      if (success) {
+        const userRole = sessionStorage.getItem("userRole");
+
+        // Redirect based on role
+        if (userRole === "admin") {
+          navigate("/admin/dashboard", { replace: true });
+        } else if (userRole === "mahasiswa") {
+          navigate("/mahasiswa/voting", { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       }
-    } else {
-      const data = await res.json();
-      setError(data.message || "Login gagal");
+    } catch (error) {
+      setError(error.message || "Login gagal");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +61,9 @@ export default function Login() {
           <h2 className="mt-4 text-3xl font-bold text-black-800">
             Selamat Datang
           </h2>
-          <p className="mt-2 text-black-400">Silahkan login untuk melanjutkan</p>
+          <p className="mt-2 text-black-400">
+            Silahkan login untuk melanjutkan
+          </p>
         </div>
 
         {error && (
@@ -139,8 +150,9 @@ export default function Login() {
             <button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Loading..." : "Login"}
             </button>
           </div>
         </form>

@@ -72,12 +72,12 @@ const ProfileDropdown = ({ user, onLogout }) => {
 
 // Main Admin Dashboard Layout Component
 const AdminDashboardLayout = ({ children }) => {
+  const { user, isAuthenticated } = useUser();
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, updateUser } = useUser(); // Get user from context
 
   // Menu items configuration
   const menuItems = [

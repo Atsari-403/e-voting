@@ -1,23 +1,27 @@
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
+require("dotenv").config();
 
-dotenv.config();
-
-exports.verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-
-  // Jika token tidak ada, kirimkan respons 401 Unauthorized
-  if (!token) {
-    return res.status(401).json({ message: "Token tidak ditemukan" });
-  }
-
+const verifyToken = (req, res, next) => {
   try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // menyimpan informasi user ke dalam req.user
+    req.user = decoded;
     next();
-  } catch (err) {
-    return res
-      .status(403)
-      .json({ message: "Token tidak valid atau kadaluarsa" });
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(403).json({ message: "Invalid or expired token" });
   }
 };
+
+module.exports = { verifyToken };

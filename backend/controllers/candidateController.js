@@ -4,12 +4,12 @@ const fs = require("fs");
 const path = require("path");
 
 // Debug helper
-const logRequestInfo = (req, message) => {
-  console.log(`=== ${message} ===`);
-  console.log("Direktori saat ini:", __dirname);
-  console.log("Request body:", req.body);
-  console.log("Request file:", req.file);
-};
+// const logRequestInfo = (req, message) => {
+//   console.log(`=== ${message} ===`);
+//   console.log("Direktori saat ini:", __dirname);
+//   console.log("Request body:", req.body);
+//   console.log("Request file:", req.file);
+// };
 
 exports.getAllCandidates = async (req, res) => {
   try {
