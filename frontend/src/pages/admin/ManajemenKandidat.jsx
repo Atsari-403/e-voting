@@ -9,7 +9,7 @@ import {
   User,
   Users,
   Award,
-  ChevronRight,
+  // ChevronRight,
   Plus,
   List,
 } from "lucide-react";
@@ -119,7 +119,7 @@ const ManajemenKandidat = () => {
         {candidates.map((candidate) => (
           <div
             key={candidate.id}
-            className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100"
+            className="bg-gray-50 p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100"
           >
             <div className="flex flex-col md:flex-row gap-4 md:gap-6">
               {/* Foto Profil Kandidat - Lebih responsif dengan ukuran yang menyesuaikan */}
@@ -136,7 +136,7 @@ const ManajemenKandidat = () => {
                       <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                     </div>
                   )}
-                  <span className="absolute -bottom-1 right-0 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                  <span className="absolute -bottom-1 right-0 bg-green-600 text-white text-xs px-2 py-1 rounded-full">
                     Ketua
                   </span>
                 </div>
@@ -153,7 +153,7 @@ const ManajemenKandidat = () => {
                       <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                     </div>
                   )}
-                  <span className="absolute -bottom-1 right-0 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                  <span className="absolute -bottom-1 right-0 bg-green-400 text-white text-xs px-2 py-1 rounded-full">
                     Wakil
                   </span>
                 </div>
@@ -169,7 +169,7 @@ const ManajemenKandidat = () => {
                     <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                       <div>
                         <h4 className="flex items-center text-gray-700 font-semibold">
-                          <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />{" "}
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />{" "}
                           Visi
                         </h4>
                         <p className="mt-1 text-sm sm:text-base text-gray-600 pl-6 sm:pl-7">
@@ -179,7 +179,7 @@ const ManajemenKandidat = () => {
 
                       <div>
                         <h4 className="flex items-center text-gray-700 font-semibold">
-                          <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />{" "}
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />{" "}
                           Misi
                         </h4>
                         <p className="mt-1 text-sm sm:text-base text-gray-600 pl-6 sm:pl-7">
@@ -188,22 +188,12 @@ const ManajemenKandidat = () => {
                       </div>
                     </div>
                   </div>
-
-                  {candidate.fotoPamflet && (
-                    <div className="mt-4 lg:mt-0 lg:ml-4 w-full lg:w-auto flex justify-center lg:block">
-                      <img
-                        src={`http://localhost:5000${candidate.fotoPamflet}`}
-                        alt="Pamflet"
-                        className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow"
-                      />
-                    </div>
-                  )}
                 </div>
 
                 <div className="mt-4 sm:mt-6 flex justify-end">
                   <button
                     onClick={() => handleDeleteCandidate(candidate.id)}
-                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center text-sm sm:text-base"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex items-center text-sm sm:text-base"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Hapus Kandidat
@@ -223,13 +213,13 @@ const ManajemenKandidat = () => {
         {/* Breadcrumb */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           {/* Navigation Tabs */}
-          <div className="bg-white border-b">
+          <div className="bg-blue-50">
             <div className="flex">
               <button
                 onClick={() => setActiveTab("daftar")}
                 className={`px-3 sm:px-6 py-2 sm:py-3 font-medium flex items-center text-sm sm:text-base ${
                   activeTab === "daftar"
-                    ? "text-purple-600 border-b-2 border-purple-600"
+                    ? "text-blue-600 border-b-2"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -240,7 +230,7 @@ const ManajemenKandidat = () => {
                 onClick={() => setActiveTab("tambah")}
                 className={`px-3 sm:px-6 py-2 sm:py-3 font-medium flex items-center text-sm sm:text-base ${
                   activeTab === "tambah"
-                    ? "text-purple-600 border-b-2 border-purple-600"
+                    ? "text-blue-600 border-b-2"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -266,9 +256,7 @@ const ManajemenKandidat = () => {
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
                   Tambah Kandidat Baru
                 </h2>
-                <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200">
                   <KandidatForm onSuccess={handleCandidateAdded} />
-                </div>
               </div>
             )}
           </div>

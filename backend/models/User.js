@@ -17,6 +17,10 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    hasVoted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     role: {
       type: DataTypes.ENUM("admin", "mahasiswa"),
       allowNull: false,

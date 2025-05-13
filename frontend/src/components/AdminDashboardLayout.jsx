@@ -11,7 +11,7 @@ import {
   Users,
   UserCheck,
   BarChart,
-  Settings,
+  // Settings,
 } from "lucide-react";
 import Logo from "../assets/Logo.png";
 
@@ -19,11 +19,11 @@ import Logo from "../assets/Logo.png";
 const SidebarItem = ({ icon, text, active, collapsed, onClick }) => {
   return (
     <li
-      className={`flex items-center p-2 my-1 rounded-md cursor-pointer transition-all
+      className={`flex items-center p-2 my-1 rounded-md cursor-pointer transition-all mb-2
         ${
           active
-            ? "bg-purple-700 text-white"
-            : "hover:bg-purple-100 text-gray-700 hover:text-purple-700"
+            ? "bg-blue-500 text-white"
+            : "hover:bg-blue-100 text-gray-700 hover:text-blue-500"
         }`}
       onClick={onClick}
     >
@@ -45,7 +45,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 focus:outline-none"
       >
-        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white">
+        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
           {user?.name?.charAt(0) || "A"}
         </div>
         <span className="hidden md:block text-sm">{user?.name || "Admin"}</span>
@@ -59,7 +59,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
             </p>
           </div>
           <button
-            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-purple-50"
+            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50"
             onClick={onLogout}
           >
             <LogOut size={16} className="mr-2" /> Logout
@@ -77,7 +77,7 @@ const AdminDashboardLayout = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser(); // Get user from context
+  const { user, updateUser } = useUser(); // Get user from context
 
   // Menu items configuration
   const menuItems = [
@@ -156,7 +156,7 @@ const AdminDashboardLayout = ({ children }) => {
                   alt="E-Voting Logo"
                   className="h-10 transition-all"
                 />
-                <h2 className="ml-2 text-lg font-bold text-purple-800">
+                <h2 className="ml-5 text-lg font-bold text-blue-600">
                   E-Voting
                 </h2>
               </div>
@@ -168,7 +168,7 @@ const AdminDashboardLayout = ({ children }) => {
 
             {/* Collapse/Expand Button */}
             <button
-              className={`p-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 ${
+              className={`p-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 ${
                 collapsed ? "w-full flex justify-center" : ""
               }`}
               onClick={() => setCollapsed(!collapsed)}
@@ -218,7 +218,7 @@ const AdminDashboardLayout = ({ children }) => {
           <div className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center">
               <img src={Logo} alt="E-Voting Logo" className="h-10" />
-              <h2 className="ml-2 text-lg font-bold text-purple-800">
+              <h2 className="ml-2 text-lg font-bold text-blue-600">
                 E-Voting
               </h2>
             </div>
@@ -258,7 +258,7 @@ const AdminDashboardLayout = ({ children }) => {
             </button>
 
             {/* Page title dinamis berdasarkan activeMenu */}
-            <h1 className="text-lg font-bold text-black-400 md:ml-0">
+            <h1 className="text-lg font-semibold text-gray-800 md:ml-0">
               {menuItems.find((item) => item.id === activeMenu)?.text ||
                 "Dashboard"}
             </h1>

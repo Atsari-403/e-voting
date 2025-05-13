@@ -275,7 +275,7 @@ const KandidatForm = ({ onSuccess }) => {
   }
 
   return (
-    <div className="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-gray-200">
+    <div className="bg-gray-50 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-gray-200">
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 sm:p-4 mb-4 sm:mb-6 rounded shadow-sm">
           <div className="flex">
@@ -307,7 +307,7 @@ const KandidatForm = ({ onSuccess }) => {
               name="designType"
               value={formData.designType}
               onChange={handleDesignTypeChange}
-              className="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 sm:py-3 px-3 sm:px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
+              className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 sm:py-3 px-3 sm:px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
               required
             >
               <option value="combined">Pamflet Gabungan</option>
@@ -330,8 +330,8 @@ const KandidatForm = ({ onSuccess }) => {
           </p>
         </div>
 
-        <div className="p-3 sm:p-4 bg-blue-50 rounded-lg mb-4 sm:mb-6">
-          <h3 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">
+        <div className="p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 bg-white">
+          <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
             Informasi Kandidat
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -367,7 +367,7 @@ const KandidatForm = ({ onSuccess }) => {
           </div>
         </div>
 
-        <div className="p-3 sm:p-4 bg-gray-50 rounded-lg mb-4 sm:mb-6">
+        <div className="p-3 sm:p-4 bg-white rounded-lg mb-4 sm:mb-6">
           <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
             Visi & Misi
           </h3>
@@ -401,7 +401,8 @@ const KandidatForm = ({ onSuccess }) => {
             ></textarea>
           </div>
         </div>
-        <div className="p-3 sm:p-4 bg-gray-50 rounded-lg mb-4 sm:mb-6">
+
+        <div className="p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 bg-white">
           <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
             Unggah Foto
           </h3>
@@ -490,7 +491,7 @@ const KandidatForm = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className={`px-6 py-2.5 rounded-lg text-white font-medium flex items-center ${
+            className={`px-4 py-2 rounded-lg text-white font-medium flex items-center ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"

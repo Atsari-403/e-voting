@@ -21,7 +21,7 @@ const ModalComponent = ({ isOpen, title, onClose, children }) => {
         className="bg-white p-6 rounded-lg w-full max-w-md mx-4"
         onClick={handleContentClick}
       >
-        <h2 className="text-xl font-semibold mb-4 text-purple-800">{title}</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">{title}</h2>
         {children}
       </div>
     </div>
@@ -56,7 +56,7 @@ const AddMahasiswaForm = ({ onClose, onSubmit }) => {
           placeholder="Masukkan NIM"
           value={formData.nim}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div>
@@ -69,7 +69,7 @@ const AddMahasiswaForm = ({ onClose, onSubmit }) => {
           placeholder="Masukkan Nama"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div>
@@ -82,19 +82,19 @@ const AddMahasiswaForm = ({ onClose, onSubmit }) => {
           placeholder="Masukkan Password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div className="flex justify-end space-x-2 pt-2">
         <button
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          className="px-4 py-2 bg-red-500 rounded-lg text-white hover:text-white hover:bg-red-600 transition-colors"
         >
           Batal
         </button>
         <button
           onClick={handleSubmit}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Simpan
         </button>
@@ -135,7 +135,7 @@ const EditMahasiswaForm = ({ mahasiswa, onClose, onSubmit }) => {
           name="nim"
           value={formData.nim}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div>
@@ -147,7 +147,7 @@ const EditMahasiswaForm = ({ mahasiswa, onClose, onSubmit }) => {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div>
@@ -160,13 +160,13 @@ const EditMahasiswaForm = ({ mahasiswa, onClose, onSubmit }) => {
           placeholder="Kosongkan jika tidak ingin mengganti"
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       <div className="flex justify-end space-x-2 pt-2">
         <button
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          className="px-4 py-2 border bg-red-500 rounded-lg text-white hover:text-white hover:bg-red-600 transition-colors"
         >
           Batal
         </button>
@@ -376,14 +376,14 @@ const ManajemenMahasiswa = () => {
           <div className="flex flex-col sm:flex-row gap-3 order-2 md:order-1">
             <button
               onClick={() => setShowModal(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
               <Plus size={16} /> Tambah Mahasiswa
             </button>
 
             <button
               onClick={() => fileInputRef.current.click()}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 transition-colors shadow-sm"
+              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
               <Upload size={16} /> Upload Excel
             </button>
@@ -403,7 +403,7 @@ const ManajemenMahasiswa = () => {
               placeholder="Cari NIM atau nama..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full md:w-64"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent w-full md:w-64"
             />
             <Search
               size={18}
@@ -416,19 +416,22 @@ const ManajemenMahasiswa = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden mt-4">
           {isLoading ? (
             <div className="flex justify-center items-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
           ) : (
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-blue-100">
                 <tr className="text-left">
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-gray-700 uppercase tracking-wider">
                     NIM
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Nama
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Status Voting
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -442,6 +445,17 @@ const ManajemenMahasiswa = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {mahasiswa.name || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            mahasiswa.hasVoted
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {mahasiswa.hasVoted ? "Sudah Voting" : "Belum Voting"}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex flex-col sm:flex-row gap-2">
                         <button
@@ -468,7 +482,7 @@ const ManajemenMahasiswa = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan="3"
+                      colSpan="4"
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       {searchTerm
