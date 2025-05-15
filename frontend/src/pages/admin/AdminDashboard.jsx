@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
-import { Activity, ArrowUp, Users, UserCheck, CheckSquare, XSquare} from "lucide-react";
+import {
+  Activity,
+  ArrowUp,
+  Users,
+  UserCheck,
+  CheckSquare,
+  XSquare,
+} from "lucide-react";
 import axios from "axios"; // Pastikan axios sudah diimport
 
 // Card Component
@@ -18,35 +25,6 @@ const DashboardCard = ({ title, value, icon, color }) => {
   );
 };
 
-// Recent Activity Component
-// const RecentActivity = ({ activities }) => {
-//   return (
-//     <div className="bg-white rounded-lg shadow-sm p-4">
-//       <h2 className="font-medium text-lg mb-4">Aktivitas Terbaru</h2>
-//       {activities.length > 0 ? (
-//         <div className="space-y-4">
-//           {activities.map((activity) => (
-//             <div key={activity.id} className="flex items-start">
-//               <div className="bg-purple-100 rounded-full p-2 mr-3">
-//                 <Activity size={16} className="text-purple-600" />
-//               </div>
-//               <div>
-//                 <p className="text-sm">
-//                   <span className="font-medium">{activity.user}</span>{" "}
-//                   {activity.action}
-//                 </p>
-//                 <p className="text-xs text-gray-500">{activity.time}</p>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       ) : (
-//         <p className="text-gray-500 text-sm">Belum ada aktivitas terbaru</p>
-//       )}
-//     </div>
-//   );
-// };
-
 // Top Candidates Component
 const TopCandidates = ({ candidates }) => {
   return (
@@ -54,33 +32,24 @@ const TopCandidates = ({ candidates }) => {
       <h2 className="font-medium text-lg mb-4">Kandidat Teratas</h2>
       {candidates.length > 0 ? (
         <div className="space-y-4">
-          {candidates.map((candidate) => (
+          {candidates.map((candidate, index) => (
             <div
               key={candidate.id}
               className="flex items-center justify-between"
             >
               <div className="flex items-center">
                 <div className="bg-gray-200 rounded-full h-10 w-10 flex items-center justify-center mr-3">
-                  {candidate.name.charAt(0)}
+                  {index + 1}
                 </div>
                 <div>
                   <p className="font-medium">{candidate.name}</p>
                   <p className="text-sm text-gray-500">
-                    {candidate.votes} suara
+                    {candidate.votes} suara ({candidate.percentage}%)
                   </p>
                 </div>
               </div>
               <div className="flex items-center">
-                <span
-                  className={`text-sm ${
-                    candidate.trend === "up" ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {candidate.percentage}%
-                </span>
-                {candidate.trend === "up" && (
-                  <ArrowUp size={16} className="ml-1 text-green-500" />
-                )}
+                <ArrowUp size={16} className="ml-1 text-green-500" />
               </div>
             </div>
           ))}
@@ -105,9 +74,9 @@ const AdminDashboard = () => {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(null);
 
   useEffect(() => {
-    // Fungsi untuk mengambil data dashboard
     const fetchDashboardData = async () => {
       try {
         const [mahasiswaResponse, kandidatResponse] = await Promise.all([
@@ -119,33 +88,52 @@ const AdminDashboard = () => {
           }),
         ]);
 
+        // Filter mahasiswa (exclude admin)
         const mahasiswaList = mahasiswaResponse.data.filter(
-          (user) => user?.nim && user.nim !== "mahasiswa"
+          (user) => user?.nim && user.nim !== "admin"
         );
 
         const totalMahasiswa = mahasiswaList.length;
         const kandidatList = kandidatResponse.data;
+        const totalVotes = mahasiswaList.filter(
+          (m) => m.hasVoted === true
+        ).length;
 
-        // Format kandidat data sesuai dengan struktur response API
-        const formattedCandidates = kandidatList.map((kandidat) => ({
-          id: kandidat.id,
-          name: `${kandidat.nameKetua} & ${kandidat.nameWakil}`,
-          votes: kandidat.jumlah_suara || 0,
-          percentage: (
-            ((kandidat.jumlah_suara || 0) / totalMahasiswa) *
-            100
-          ).toFixed(1),
-          trend: "up",
-        }));
+        console.log("Debug voting data:", {
+          totalMahasiswa,
+          totalVotes,
+          kandidatList: kandidatList.map((k) => ({
+            id: k.id,
+            name: `${k.nameKetua} & ${k.nameWakil}`,
+            votes: k.jumlah_suara || 0,
+          })),
+        });
 
+        // Format kandidat data dengan perhitungan suara yang tepat
+        const formattedCandidates = kandidatList
+          .map((kandidat) => ({
+            id: kandidat.id,
+            name: `${kandidat.nameKetua} & ${kandidat.nameWakil}`,
+            votes: kandidat.jumlah_suara || 0,
+            percentage:
+              totalVotes > 0
+                ? (((kandidat.jumlah_suara || 0) / totalVotes) * 100).toFixed(1)
+                : "0.0",
+            trend: "up",
+          }))
+          // Sort kandidat berdasarkan jumlah suara (descending)
+          .sort((a, b) => b.votes - a.votes);
+
+        // Update stats
         setStats({
-          totalMahasiswa: totalMahasiswa,
+          totalMahasiswa,
           totalKandidat: kandidatList.length,
-          sudahVoting: 0,
-          belumVoting: 0,
+          sudahVoting: totalVotes,
+          belumVoting: totalMahasiswa - totalVotes,
         });
 
         setCandidates(formattedCandidates);
+        setLastUpdate(new Date().toLocaleTimeString());
         setLoading(false);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -153,12 +141,21 @@ const AdminDashboard = () => {
           "Gagal memuat data: " +
             (error.response?.data?.message || error.message)
         );
-        setLoading(false);
       }
     };
 
+    // Initial fetch
     fetchDashboardData();
-  }, []);
+
+    // Set up polling every 10 seconds
+    const interval = setInterval(() => {
+      console.log("Polling dashboard data...");
+      fetchDashboardData();
+    }, 10000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array since we want this to run once on mount
 
   // Tampilkan loading state selama proses fetch data
   if (loading) {
@@ -231,6 +228,11 @@ const AdminDashboard = () => {
           {/* <RecentActivity activities={activities} /> */}
           <TopCandidates candidates={candidates} />
         </div>
+        {lastUpdate && (
+          <div className="text-xs text-gray-500 mt-2">
+            Terakhir diperbarui: {lastUpdate}
+          </div>
+        )}
       </div>
     </AdminDashboardLayout>
   );

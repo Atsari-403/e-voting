@@ -222,19 +222,46 @@ const ManajemenMahasiswa = () => {
   const fetchMahasiswas = useCallback(async () => {
     setIsLoading(true);
     try {
+      console.log("Mengambil data mahasiswa...");
       const response = await axios.get("http://localhost:5000/api/users", {
         withCredentials: true,
       });
-      setMahasiswas(response.data);
+
+      // Konversi data dengan eksplisit
+      const processedData = response.data.map((user) => ({
+        ...user,
+        // Pastikan hasVoted dikonversi ke boolean
+        hasVoted: user.hasVoted === true || user.hasVoted === 1,
+      }));
+
+      // Debug setiap user
+      processedData.forEach((user) => {
+        console.log("Data mahasiswa:", {
+          nim: user.nim,
+          nama: user.name,
+          hasVoted: user.hasVoted,
+          tipeData: typeof user.hasVoted,
+        });
+      });
+
+      setMahasiswas(processedData);
     } catch (error) {
-      console.error("Gagal mengambil data mahasiswa:", error);
+      console.error("Error fetch:", error);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchMahasiswas();
+    fetchMahasiswas(); // Initial fetch
+
+    // Polling setiap 10 detik
+    const interval = setInterval(() => {
+      console.log("Memulai polling data...");
+      fetchMahasiswas();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [fetchMahasiswas]);
 
   // Handler tambah mahasiswa
@@ -447,14 +474,21 @@ const ManajemenMahasiswa = () => {
                         {mahasiswa.name || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {console.log(
+                          "Rendering status:",
+                          mahasiswa.nim,
+                          mahasiswa.hasVoted
+                        )}
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            mahasiswa.hasVoted
+                            mahasiswa.hasVoted === true
                               ? "bg-green-100 text-green-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {mahasiswa.hasVoted ? "Sudah Voting" : "Belum Voting"}
+                          {mahasiswa.hasVoted === true
+                            ? "Sudah Voting"
+                            : "Belum Voting"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex flex-col sm:flex-row gap-2">

@@ -89,7 +89,7 @@ const HasilVotingPage = () => {
 
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                 <h3 className="text-gray-500 mb-2">Suara terbanyak</h3>
-                <p className="text-3xl font-semibold text-green-500">Cole Palmer</p>
+                <p className="text-3xl font-semibold text-green-500">LAMINE YAMAL</p>
               </div>
             </div>
           </div>

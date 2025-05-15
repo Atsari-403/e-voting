@@ -12,7 +12,7 @@ import {
   Check,
 } from "lucide-react";
 
-const VotingPage = () => {
+const MahasiswaVoting = () => {
   const [candidates, setCandidates] = useState([]);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -22,7 +22,7 @@ const VotingPage = () => {
   const navigate = useNavigate();
 
   // Base URL untuk gambar
-  const baseImageUrl = "http://localhost:5000/uploads/"; // Pastikan diakhiri dengan slash
+  const baseImageUrl = "http://localhost:5000/uploads/";
 
   // Fungsi untuk memformat path gambar dengan benar
   const formatImagePath = (path) => {
@@ -65,21 +65,14 @@ const VotingPage = () => {
           { withCredentials: true }
         );
         setCandidates(response.data);
-        setLoading(false); // Matikan loading setelah data didapat
+        setLoading(false);
 
         // Log untuk debugging
         console.log("Candidates data:", response.data);
-        response.data.forEach((candidate) => {
-          console.log("Image URLs:", {
-            ketua: formatImagePath(candidate.fotoKetua),
-            wakil: formatImagePath(candidate.fotoWakil),
-            pamflet: formatImagePath(candidate.fotoPamflet),
-          });
-        });
       } catch (err) {
         setError("Gagal memuat data kandidat");
         console.error("Error fetching candidates:", err);
-        setLoading(false); // Matikan loading jika terjadi error
+        setLoading(false);
       }
     };
     fetchCandidates();
@@ -106,21 +99,37 @@ const VotingPage = () => {
     setShowConfirmation(true);
   };
 
-  // Submit vote
+  // Submit vote - Fix untuk memanggil endpoint yang benar
   const handleConfirmVote = async () => {
     try {
       setLoading(true);
-      await axios.post(
-        "http://localhost:5000/api/voting",
+      console.log("Sending vote request:", {
+        candidateId: selectedCandidate.id,
+        timestamp: new Date().toISOString(),
+      });
+
+      const response = await axios.post(
+        "http://localhost:5000/api/users/vote-candidate",
         {
-          kandidatId: selectedCandidate.id,
+          candidateId: selectedCandidate.id,
         },
         { withCredentials: true }
       );
 
+      console.log("Vote response:", {
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString(),
+      });
+
       alert("Voting berhasil dilakukan!");
       navigate("/voting-success");
     } catch (err) {
+      console.error("Vote error:", {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+      });
       setError(
         "Gagal melakukan voting: " +
           (err.response?.data?.message || err.message)
@@ -137,9 +146,7 @@ const VotingPage = () => {
       <header className="bg-white text-gray-800 shadow-lg border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            
-              <img src={logo} alt="E-Voting Logo" className="h-8" />
-            
+            <img src={logo} alt="E-Voting Logo" className="h-8" />
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
               E-Voting Mahasiswa
             </h1>
@@ -155,7 +162,7 @@ const VotingPage = () => {
         </div>
       </header>
 
-      {/* Main Content dengan Style Modern dan Colorful */}
+      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 bg-gradient-to-r from-white to-blue-50 p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center">
@@ -172,7 +179,7 @@ const VotingPage = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-xl flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-3"></div>
-              <p className="text-gray-700">Memuat data kandidat...</p>
+              <p className="text-gray-700">Memuat data...</p>
             </div>
           </div>
         )}
@@ -198,7 +205,6 @@ const VotingPage = () => {
               >
                 {/* Pasangan Foto Kandidat */}
                 {candidate.designType === "combined" ? (
-                  // Tampilkan satu foto pamflet jika designType 'combined'
                   <div className="aspect-w-16 aspect-h-9 bg-gray-100">
                     <img
                       src={
@@ -208,16 +214,11 @@ const VotingPage = () => {
                       alt={`Pasangan ${candidate.nameKetua} & ${candidate.nameWakil}`}
                       className="object-cover w-full h-48"
                       onError={(e) => {
-                        console.error(
-                          "Image load error (pamflet):",
-                          e.target.src
-                        );
                         e.target.src = "/placeholder-candidate.png";
                       }}
                     />
                   </div>
                 ) : (
-                  // Tampilkan dua foto terpisah jika designType 'separate'
                   <div className="flex h-48">
                     <div className="w-1/2 bg-gray-100 relative">
                       <img
@@ -228,10 +229,6 @@ const VotingPage = () => {
                         alt={`Foto ${candidate.nameKetua}`}
                         className="object-cover w-full h-48"
                         onError={(e) => {
-                          console.error(
-                            "Image load error (ketua):",
-                            e.target.src
-                          );
                           e.target.src = "/placeholder-ketua.png";
                         }}
                       />
@@ -248,10 +245,6 @@ const VotingPage = () => {
                         alt={`Foto ${candidate.nameWakil}`}
                         className="object-cover w-full h-48"
                         onError={(e) => {
-                          console.error(
-                            "Image load error (wakil):",
-                            e.target.src
-                          );
                           e.target.src = "/placeholder-wakil.png";
                         }}
                       />
@@ -308,7 +301,7 @@ const VotingPage = () => {
           </div>
         )}
 
-        {/* Instructions Section dengan Design Baru dan Colorful */}
+        {/* Instructions Section */}
         <div className="mt-8 bg-gradient-to-r from-white to-indigo-50 rounded-xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-2 rounded-full mr-3">
@@ -380,10 +373,6 @@ const VotingPage = () => {
                     alt={`Foto ${selectedCandidate.nameKetua} & ${selectedCandidate.nameWakil}`}
                     className="w-20 h-20 object-cover rounded-lg"
                     onError={(e) => {
-                      console.error(
-                        "Image load error (modal pamflet):",
-                        e.target.src
-                      );
                       e.target.src = "/placeholder-candidate.png";
                     }}
                   />
@@ -398,10 +387,6 @@ const VotingPage = () => {
                         alt={`Foto ${selectedCandidate.nameKetua}`}
                         className="w-16 h-16 object-cover rounded-lg"
                         onError={(e) => {
-                          console.error(
-                            "Image load error (modal ketua):",
-                            e.target.src
-                          );
                           e.target.src = "/placeholder-ketua.png";
                         }}
                       />
@@ -418,10 +403,6 @@ const VotingPage = () => {
                         alt={`Foto ${selectedCandidate.nameWakil}`}
                         className="w-16 h-16 object-cover rounded-lg"
                         onError={(e) => {
-                          console.error(
-                            "Image load error (modal wakil):",
-                            e.target.src
-                          );
                           e.target.src = "/placeholder-wakil.png";
                         }}
                       />
@@ -490,4 +471,4 @@ const VotingPage = () => {
   );
 };
 
-export default VotingPage;
+export default MahasiswaVoting;

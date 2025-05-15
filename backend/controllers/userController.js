@@ -46,19 +46,32 @@ exports.addUser = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      where: { role: "mahasiswa" },
-      attributes: ["id", "nim", "name", "createdAt", "updatedAt"],
+      attributes: ["id", "nim", "name", "hasVoted"],
+      where: {
+        role: "mahasiswa",
+      },
     });
 
-    res.json(users);
+    // Log data sebelum dikirim
+    console.log(
+      "Data users yang akan dikirim:",
+      users.map((user) => ({
+        nim: user.nim,
+        name: user.name,
+        hasVoted: Boolean(user.hasVoted),
+      }))
+    );
+
+    // Transform data sebelum dikirim
+    const transformedUsers = users.map((user) => ({
+      ...user.toJSON(),
+      hasVoted: Boolean(user.hasVoted),
+    }));
+
+    res.json(transformedUsers);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "Gagal mendapatkan data mahasiswa",
-        error: error.message,
-      });
+    console.error("Error getting users:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -77,12 +90,10 @@ exports.getUserById = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "Gagal mendapatkan data mahasiswa",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Gagal mendapatkan data mahasiswa",
+      error: error.message,
+    });
   }
 };
 
@@ -114,12 +125,10 @@ exports.updateUser = async (req, res) => {
     res.json({ message: "Data mahasiswa berhasil diperbarui" });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "Gagal memperbarui data mahasiswa",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Gagal memperbarui data mahasiswa",
+      error: error.message,
+    });
   }
 };
 
@@ -150,11 +159,9 @@ exports.importUsers = async (req, res) => {
     const users = req.body.users;
 
     if (!users || users.length === 0) {
-      return res
-        .status(400)
-        .json({
-          message: "Data pengguna dari file Excel kosong atau tidak valid.",
-        });
+      return res.status(400).json({
+        message: "Data pengguna dari file Excel kosong atau tidak valid.",
+      });
     }
 
     const results = [];
@@ -195,5 +202,67 @@ exports.importUsers = async (req, res) => {
   }
 };
 
+exports.voteCandidate = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { candidateId } = req.body;
 
+    console.log("Attempting to vote:", {
+      userId,
+      candidateId,
+      requestBody: req.body,
+    });
 
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      console.log("User not found:", userId);
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    console.log("Current user status:", {
+      userId,
+      hasVoted: user.hasVoted,
+      beforeUpdate: true,
+    });
+
+    // Force update hasVoted status
+    const result = await User.update(
+      { hasVoted: true },
+      {
+        where: { id: userId },
+        returning: true,
+      }
+    );
+
+    console.log("Update result:", {
+      affected: result[0],
+      userId,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Verify update
+    const updatedUser = await User.findByPk(userId);
+    console.log("Status after update:", {
+      userId,
+      hasVoted: updatedUser.hasVoted,
+    });
+
+    res.status(200).json({
+      message: "Vote berhasil disimpan",
+      status: {
+        before: user.hasVoted,
+        after: updatedUser.hasVoted,
+      },
+    });
+  } catch (error) {
+    console.error("Vote error:", {
+      message: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({
+      message: "Gagal menyimpan vote",
+      error: error.message,
+    });
+  }
+};

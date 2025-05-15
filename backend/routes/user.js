@@ -63,4 +63,7 @@ router.delete(
   userController.deleteUser
 );
 
+
+router.post("/vote-candidate", authMiddleware.verifyToken, userController.voteCandidate);
+
 module.exports = router;
