@@ -10,6 +10,7 @@ import {
   X,
   AlertTriangle,
   Check,
+  LogOut,
 } from "lucide-react";
 
 const MahasiswaVoting = () => {
@@ -75,7 +76,7 @@ const MahasiswaVoting = () => {
           );
         }
 
-        console.log("User vote status:", response.data.hasVoted);
+        // console.log("User vote status:", response.data.hasVoted);
       } catch (err) {
         console.error("Error checking user vote status:", err);
         // Jika gagal mengecek status, asumsikan user belum memilih
@@ -97,7 +98,7 @@ const MahasiswaVoting = () => {
         setLoading(false);
 
         // Log untuk debugging
-        console.log("Candidates data:", response.data);
+        // console.log("Candidates data:", response.data);
       } catch (err) {
         setError("Gagal memuat data kandidat");
         console.error("Error fetching candidates:", err);
@@ -140,10 +141,10 @@ const MahasiswaVoting = () => {
   const handleConfirmVote = async () => {
     try {
       setLoading(true);
-      console.log("Sending vote request:", {
-        candidateId: selectedCandidate.id,
-        timestamp: new Date().toISOString(),
-      });
+      // console.log("Sending vote request:", {
+      //   candidateId: selectedCandidate.id,
+      //   timestamp: new Date().toISOString(),
+      // });
 
       const response = await axios.post(
         "http://localhost:5000/api/users/vote-candidate",
@@ -153,11 +154,11 @@ const MahasiswaVoting = () => {
         { withCredentials: true }
       );
 
-      console.log("Vote response:", {
-        status: response.status,
-        data: response.data,
-        timestamp: new Date().toISOString(),
-      });
+      // console.log("Vote response:", {
+      //   status: response.status,
+      //   data: response.data,
+      //   timestamp: new Date().toISOString(),
+      // });
 
       // Update local state setelah berhasil voting
       setHasVoted(true);
@@ -186,6 +187,23 @@ const MahasiswaVoting = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/logout",
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert("Gagal melakukan logout");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header - Navbar Putih dengan Aksen Modern dan Colorful */}
@@ -204,6 +222,15 @@ const MahasiswaVoting = () => {
                 {formatTime(timeLeft)}
               </span>
             </div>
+
+            {/* tombol logout */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="font-medium">Logout</span>
+            </button>
           </div>
         </div>
       </header>

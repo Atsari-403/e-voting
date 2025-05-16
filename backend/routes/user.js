@@ -14,6 +14,29 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
+// Route untuk hasil voting
+router.get(
+  "/vote-results",
+  authMiddleware.verifyToken,
+  userController.getVoteResults
+);
+
+// Route untuk vote kandidat
+router.post(
+  "/vote-candidate",
+  authMiddleware.verifyToken,
+  userController.voteCandidate
+);
+
+// Route untuk mengimpor mahasiswa dari file Excel
+router.post(
+  "/import",
+  authMiddleware.verifyToken,
+  verifyAdmin,
+  uploadExcel,
+  userController.importUsers
+);
+
 // Route untuk mendapatkan semua mahasiswa
 router.get(
   "/",
@@ -38,15 +61,6 @@ router.post(
   userController.addUser
 );
 
-// Route untuk mengimpor mahasiswa dari file Excel
-router.post(
-  "/import",
-  authMiddleware.verifyToken,
-  verifyAdmin,
-  uploadExcel,
-  userController.importUsers
-);
-
 // Route untuk memperbarui data mahasiswa
 router.put(
   "/:id",
@@ -62,8 +76,5 @@ router.delete(
   verifyAdmin,
   userController.deleteUser
 );
-
-
-router.post("/vote-candidate", authMiddleware.verifyToken, userController.voteCandidate);
 
 module.exports = router;

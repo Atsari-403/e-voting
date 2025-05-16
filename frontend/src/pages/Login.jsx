@@ -13,23 +13,34 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nim, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nim, password }),
+      });
 
-    if (res.ok) {
       const data = await res.json();
-      if (data.role === "admin") {
-        navigate("/admin/dashboard");
+
+      if (res.ok) {
+        // console.log("Login successful, cookie should be set");
+        // console.log("User data:", data.user);
+
+        // Tambahkan delay sebelum redirect (opsional)
+        setTimeout(() => {
+          if (data.user.role === "admin") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/mahasiswa/voting");
+          }
+        }, 300);
       } else {
-        navigate("/mahasiswa/voting");
+        setError(data.message || "Login gagal");
       }
-    } else {
-      const data = await res.json();
-      setError(data.message || "Login gagal");
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Terjadi kesalahan pada server");
     }
   };
 

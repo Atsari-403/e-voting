@@ -22,11 +22,14 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
+    // Perbaikan cookie settings
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 3600000, // 1 jam
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false, // PASTIKAN false untuk development
+      sameSite: "lax",
+      path: "/",
+      domain: undefined, // Jangan set domain secara eksplisit
     });
 
     res.status(200).json({
@@ -75,7 +78,8 @@ exports.logout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax", // Sama dengan login
+      path: "/", // Tambahkan path yang sama dengan login
     });
 
     return res.status(200).json({ message: "Logout berhasil" });

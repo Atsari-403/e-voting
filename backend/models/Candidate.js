@@ -40,6 +40,10 @@ const Candidate = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    votes: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     timestamps: true,

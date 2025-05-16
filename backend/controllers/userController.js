@@ -1,5 +1,7 @@
 const User = require("../models/User");
+const Candidate = require("../models/Candidate"); // Add this import
 const bcrypt = require("bcryptjs");
+const sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const XLSX = require("xlsx");
 
@@ -53,14 +55,6 @@ exports.getAllUsers = async (req, res) => {
     });
 
     // Log data sebelum dikirim
-    console.log(
-      "Data users yang akan dikirim:",
-      users.map((user) => ({
-        nim: user.nim,
-        name: user.name,
-        hasVoted: Boolean(user.hasVoted),
-      }))
-    );
 
     // Transform data sebelum dikirim
     const transformedUsers = users.map((user) => ({
@@ -204,72 +198,128 @@ exports.importUsers = async (req, res) => {
 
 exports.voteCandidate = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { candidateId } = req.body;
-    console.log("Attempting to vote:", {
-      userId,
-      candidateId,
-      requestBody: req.body,
+    console.log("Vote request received:", {
+      userId: req.user.id,
+      candidateId: req.body.candidateId,
     });
 
-    const user = await User.findByPk(userId);
+    const t = await sequelize.transaction();
 
-    if (!user) {
-      console.log("User not found:", userId);
-      return res.status(404).json({ message: "User tidak ditemukan" });
-    }
-
-    // Tambahkan validasi untuk mencegah user memilih lebih dari sekali
-    if (user.hasVoted) {
-      console.log("User has already voted:", userId);
-      return res.status(400).json({
-        message: "Anda sudah memberikan suara sebelumnya",
-        hasVoted: true,
+    try {
+      // Check user status
+      const user = await User.findByPk(req.user.id, {
+        transaction: t,
+        lock: true, // Add row-level locking
       });
-    }
 
-    console.log("Current user status:", {
-      userId,
-      hasVoted: user.hasVoted,
-      beforeUpdate: true,
-    });
-
-    // Force update hasVoted status
-    const result = await User.update(
-      { hasVoted: true },
-      {
-        where: { id: userId },
-        returning: true,
+      if (!user) {
+        await t.rollback();
+        return res.status(404).json({ message: "User tidak ditemukan" });
       }
-    );
 
-    console.log("Update result:", {
-      affected: result[0],
-      userId,
-      timestamp: new Date().toISOString(),
-    });
+      console.log("User before voting:", {
+        id: user.id,
+        hasVoted: user.hasVoted,
+      });
 
-    // Verify update
-    const updatedUser = await User.findByPk(userId);
-    console.log("Status after update:", {
-      userId,
-      hasVoted: updatedUser.hasVoted,
-    });
+      if (user.hasVoted) {
+        await t.rollback();
+        return res.status(400).json({ message: "Anda sudah melakukan voting" });
+      }
 
-    res.status(200).json({
-      message: "Vote berhasil disimpan",
-      status: {
-        before: user.hasVoted,
-        after: updatedUser.hasVoted,
-      },
-    });
+      // Get and update candidate with locking
+      const candidate = await Candidate.findByPk(req.body.candidateId, {
+        transaction: t,
+        lock: true, // Add row-level locking
+      });
+
+      if (!candidate) {
+        await t.rollback();
+        return res.status(404).json({ message: "Kandidat tidak ditemukan" });
+      }
+
+      console.log("Candidate before voting:", {
+        id: candidate.id,
+        votes: candidate.votes,
+      });
+
+      // Update votes directly instead of using increment
+      candidate.votes = (candidate.votes || 0) + 1;
+      await candidate.save({ transaction: t });
+
+      // Update user's voting status
+      user.hasVoted = true;
+      await user.save({ transaction: t });
+
+      // Reload both records to verify changes
+      await candidate.reload({ transaction: t });
+      await user.reload({ transaction: t });
+
+      console.log("After voting:", {
+        candidateVotes: candidate.votes,
+        userHasVoted: user.hasVoted,
+      });
+
+      await t.commit();
+
+      return res.status(200).json({
+        message: "Voting berhasil",
+        candidate: {
+          id: candidate.id,
+          votes: candidate.votes,
+        },
+      });
+    } catch (error) {
+      console.error("Transaction error:", error);
+      await t.rollback();
+      throw error;
+    }
   } catch (error) {
-    console.error("Vote error:", {
-      message: error.message,
-      stack: error.stack,
+    console.error("Vote error:", error);
+    return res.status(500).json({
+      message: "Gagal melakukan voting",
+      error: error.message,
     });
+  }
+};
+
+exports.getVoteResults = async (req, res) => {
+  try {
+    console.log("Fetching vote results...");
+
+    // Get voters with details
+    const voters = await User.findAll({
+      where: { hasVoted: true },
+      attributes: ["id", "nim", "name"],
+    });
+    console.log("Voters who have voted:", voters);
+
+    const totalVoters = voters.length;
+    console.log("Total voters:", totalVoters);
+
+    // Get candidates with vote counts
+    const candidates = await Candidate.findAll({
+      attributes: ["id", "nameKetua", "nameWakil", "votes"],
+      order: [["votes", "DESC"]],
+    });
+    console.log("Candidates with votes:", candidates);
+
+    const response = {
+      candidates: candidates.map((c) => ({
+        ...c.toJSON(),
+        percentage:
+          totalVoters > 0 ? ((c.votes / totalVoters) * 100).toFixed(2) : "0.00",
+      })),
+      totalVoters,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    console.log("Full response:", response);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error in getVoteResults:", error);
     res.status(500).json({
-      message: "Gagal menyimpan vote",
+      message: "Gagal mengambil hasil voting",
       error: error.message,
     });
   }

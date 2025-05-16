@@ -10,18 +10,45 @@ const AuthRedirect = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check authentication status from backend
-        const response = await fetch("http://localhost:5000/api/auth/me", {
-          credentials: "include",
-        });
+        // Tambahkan parameter timestamp untuk mencegah caching
+        
+        const response = await fetch(
+          `http://localhost:5000/api/auth/me?t=${new Date().getTime()}`,
+          {
+            credentials: "include", // Penting untuk mengirim cookie
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }
+        );
+
+        // console.log("Auth response:", {
+        //   status: response.status,
+        //   statusText: response.statusText,
+        //   headers: [...response.headers.entries()].map(
+        //     ([key, value]) => `${key}: ${value}`
+        //   ),
+        // });
+        
+        // console.log("Auth check response status:", response.status);
 
         if (response.status === 401) {
+          // console.log("Not authenticated");
+          setIsAuthenticated(false);
+          setIsLoading(false);
+          return;
+        }
+
+        if (!response.ok) {
+          console.error("Error checking auth:", response.statusText);
           setIsAuthenticated(false);
           setIsLoading(false);
           return;
         }
 
         const user = await response.json();
+        console.log("User data:", user);
+
         if (!user) {
           setIsAuthenticated(false);
         } else {

@@ -99,15 +99,15 @@ const AdminDashboard = () => {
           (m) => m.hasVoted === true
         ).length;
 
-        console.log("Debug voting data:", {
-          totalMahasiswa,
-          totalVotes,
-          kandidatList: kandidatList.map((k) => ({
-            id: k.id,
-            name: `${k.nameKetua} & ${k.nameWakil}`,
-            votes: k.jumlah_suara || 0,
-          })),
-        });
+        // console.log("Debug voting data:", {
+        //   totalMahasiswa,
+        //   totalVotes,
+        //   kandidatList: kandidatList.map((k) => ({
+        //     id: k.id,
+        //     name: `${k.nameKetua} & ${k.nameWakil}`,
+        //     votes: k.jumlah_suara || 0,
+        //   })),
+        // });
 
         // Format kandidat data dengan perhitungan suara yang tepat
         const formattedCandidates = kandidatList
@@ -149,7 +149,6 @@ const AdminDashboard = () => {
 
     // Set up polling every 10 seconds
     const interval = setInterval(() => {
-      console.log("Polling dashboard data...");
       fetchDashboardData();
     }, 10000);
 

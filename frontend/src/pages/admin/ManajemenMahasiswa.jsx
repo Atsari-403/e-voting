@@ -28,18 +28,18 @@ const ManajemenMahasiswa = () => {
   const fetchMahasiswas = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log("Mengambil data mahasiswa...");
+      // console.log("Mengambil data mahasiswa...");
       const data = await mahasiswaService.getAllMahasiswa();
 
       // Debug setiap user
-      data.forEach((user) => {
-        console.log("Data mahasiswa:", {
-          nim: user.nim,
-          nama: user.name,
-          hasVoted: user.hasVoted,
-          tipeData: typeof user.hasVoted,
-        });
-      });
+      // data.forEach((user) => {
+      //   console.log("Data mahasiswa:", {
+      //     nim: user.nim,
+      //     nama: user.name,
+      //     hasVoted: user.hasVoted,
+      //     tipeData: typeof user.hasVoted,
+      //   });
+      // });
 
       setMahasiswas(data);
     } catch (error) {
