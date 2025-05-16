@@ -5,10 +5,6 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 router.post("/login", authController.login);
 router.get("/me", verifyToken, authController.getMe);
-
-router.post("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.json({ message: "Logout berhasil" });
-});
+router.post("/logout", authController.logout); // Menggunakan controller logout
 
 module.exports = router;

@@ -6,6 +6,7 @@ import ManajemenKandidat from "./pages/admin/ManajemenKandidat";
 import HasilVoting from "./pages/admin/HasilVoting";
 import MahasiswaVoting from "./pages/MahasiswaVoting";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthRedirect from "./components/AuthRedirect";
 import { UserProvider } from "./contexts/UserContext";
 
 function App() {
@@ -15,7 +16,15 @@ function App() {
         {/* Redirect default */}
         <Route path="/" element={<Navigate to="/login" />} />
 
-        <Route path="/login" element={<Login />} />
+        {/* Protect login page - redirect if already authenticated */}
+        <Route
+          path="/login"
+          element={
+            <AuthRedirect>
+              <Login />
+            </AuthRedirect>
+          }
+        />
 
         <Route
           path="/admin/dashboard"

@@ -197,7 +197,7 @@ const AdminDashboard = () => {
       <div className="space-y-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <DashboardCard
+          <DashboardCard 
             title="Total Mahasiswa"
             value={stats.totalMahasiswa.toLocaleString()}
             icon={<Users size={24} className="text-blue-500" />}

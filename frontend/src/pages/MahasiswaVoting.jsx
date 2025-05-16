@@ -19,6 +19,7 @@ const MahasiswaVoting = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+  const [hasVoted, setHasVoted] = useState(false); // Add state to track if user has voted
   const navigate = useNavigate();
 
   // Base URL untuk gambar
@@ -55,6 +56,34 @@ const MahasiswaVoting = () => {
       .toString()
       .padStart(2, "0")}`;
   };
+
+  // Periksa status voting user saat komponen dimount
+  useEffect(() => {
+    const checkUserVoteStatus = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/auth/me", {
+          withCredentials: true,
+        });
+
+        // Set state hasVoted berdasarkan data dari server
+        setHasVoted(response.data.hasVoted);
+
+        // Jika user sudah memilih, tampilkan notifikasi
+        if (response.data.hasVoted) {
+          setError(
+            "Anda sudah memberikan suara sebelumnya. Tombol voting telah dinonaktifkan."
+          );
+        }
+
+        console.log("User vote status:", response.data.hasVoted);
+      } catch (err) {
+        console.error("Error checking user vote status:", err);
+        // Jika gagal mengecek status, asumsikan user belum memilih
+      }
+    };
+
+    checkUserVoteStatus();
+  }, []);
 
   // Fetch candidates on component mount
   useEffect(() => {
@@ -95,11 +124,19 @@ const MahasiswaVoting = () => {
 
   // Handle candidate selection
   const handleSelectCandidate = (candidate) => {
+    // Jika user sudah memilih, jangan izinkan untuk memilih lagi
+    if (hasVoted) {
+      setError(
+        "Anda sudah memberikan suara sebelumnya. Tidak dapat memilih kandidat lagi."
+      );
+      return;
+    }
+
     setSelectedCandidate(candidate);
     setShowConfirmation(true);
   };
 
-  // Submit vote - Fix untuk memanggil endpoint yang benar
+  // Submit vote
   const handleConfirmVote = async () => {
     try {
       setLoading(true);
@@ -122,6 +159,9 @@ const MahasiswaVoting = () => {
         timestamp: new Date().toISOString(),
       });
 
+      // Update local state setelah berhasil voting
+      setHasVoted(true);
+
       alert("Voting berhasil dilakukan!");
       navigate("/voting-success");
     } catch (err) {
@@ -130,6 +170,12 @@ const MahasiswaVoting = () => {
         response: err.response?.data,
         status: err.response?.status,
       });
+
+      // Jika error karena user sudah memilih, update state hasVoted
+      if (err.response?.data?.hasVoted) {
+        setHasVoted(true);
+      }
+
       setError(
         "Gagal melakukan voting: " +
           (err.response?.data?.message || err.message)
@@ -162,6 +208,26 @@ const MahasiswaVoting = () => {
         </div>
       </header>
 
+      {/* Info Banner untuk User yang Sudah Memilih */}
+      {hasVoted && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 m-4 rounded-md shadow-sm">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-yellow-800">
+                Anda sudah memberikan suara sebelumnya.
+              </p>
+              <p className="text-sm text-yellow-700 mt-1">
+                Anda masih dapat melihat kandidat, namun tidak dapat memberikan
+                suara lagi.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 bg-gradient-to-r from-white to-blue-50 p-6 rounded-xl shadow-sm border border-gray-100">
@@ -184,122 +250,134 @@ const MahasiswaVoting = () => {
           </div>
         )}
 
-        {error ? (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <X className="h-5 w-5 text-red-500" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm">{error}</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {candidates.map((candidate) => (
-              <div
-                key={candidate.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all transform hover:-translate-y-1 cursor-pointer"
-                onClick={() => handleSelectCandidate(candidate)}
-              >
-                {/* Pasangan Foto Kandidat */}
-                {candidate.designType === "combined" ? (
-                  <div className="aspect-w-16 aspect-h-9 bg-gray-100">
-                    <img
-                      src={
-                        formatImagePath(candidate.fotoPamflet) ||
-                        "/placeholder-candidate.png"
-                      }
-                      alt={`Pasangan ${candidate.nameKetua} & ${candidate.nameWakil}`}
-                      className="object-cover w-full h-48"
-                      onError={(e) => {
-                        e.target.src = "/placeholder-candidate.png";
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex h-48">
-                    <div className="w-1/2 bg-gray-100 relative">
-                      <img
-                        src={
-                          formatImagePath(candidate.fotoKetua) ||
-                          "/placeholder-ketua.png"
-                        }
-                        alt={`Foto ${candidate.nameKetua}`}
-                        className="object-cover w-full h-48"
-                        onError={(e) => {
-                          e.target.src = "/placeholder-ketua.png";
-                        }}
-                      />
-                      <div className="absolute bottom-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs px-2 py-1 rounded-tr-md font-medium">
-                        Ketua
-                      </div>
-                    </div>
-                    <div className="w-1/2 bg-gray-100 relative">
-                      <img
-                        src={
-                          formatImagePath(candidate.fotoWakil) ||
-                          "/placeholder-wakil.png"
-                        }
-                        alt={`Foto ${candidate.nameWakil}`}
-                        className="object-cover w-full h-48"
-                        onError={(e) => {
-                          e.target.src = "/placeholder-wakil.png";
-                        }}
-                      />
-                      <div className="absolute bottom-0 left-0 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs px-2 py-1 rounded-tr-md font-medium">
-                        Wakil
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-5">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-600 rounded-full px-3 py-1 text-xs font-bold inline-block">
-                      Pasangan #{candidate.id}
-                    </div>
-                    <div className="bg-gray-100 h-6 w-6 rounded-full flex items-center justify-center">
-                      <ChevronRight className="h-4 w-4 text-gray-500" />
-                    </div>
-                  </div>
-                  <h3 className="font-bold text-lg text-gray-800 mb-3">
-                    {candidate.nameKetua} & {candidate.nameWakil}
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm text-indigo-600">
-                        Visi:
-                      </h4>
-                      <p className="text-gray-700 text-sm mt-1">
-                        {candidate.visi}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm text-purple-600">
-                        Misi:
-                      </h4>
-                      <p className="text-gray-700 text-sm mt-1">
-                        {candidate.misi}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className="mt-5 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors shadow-sm flex items-center justify-center space-x-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectCandidate(candidate);
-                    }}
-                  >
-                    <span>Pilih Kandidat</span>
-                    <CheckCircle className="h-4 w-4" />
-                  </button>
+        {error &&
+          !hasVoted && ( // Tampilkan error kecuali jika ini adalah pesan hasVoted yang sudah ditampilkan di banner
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <X className="h-5 w-5 text-red-500" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm">{error}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {candidates.map((candidate) => (
+            <div
+              key={candidate.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all transform hover:-translate-y-1 cursor-pointer"
+              onClick={() => handleSelectCandidate(candidate)}
+            >
+              {/* Pasangan Foto Kandidat */}
+              {candidate.designType === "combined" ? (
+                <div className="aspect-w-16 aspect-h-9 bg-gray-100">
+                  <img
+                    src={
+                      formatImagePath(candidate.fotoPamflet) ||
+                      "/placeholder-candidate.png"
+                    }
+                    alt={`Pasangan ${candidate.nameKetua} & ${candidate.nameWakil}`}
+                    className="object-cover w-full h-48"
+                    onError={(e) => {
+                      e.target.src = "/placeholder-candidate.png";
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="flex h-48">
+                  <div className="w-1/2 bg-gray-100 relative">
+                    <img
+                      src={
+                        formatImagePath(candidate.fotoKetua) ||
+                        "/placeholder-ketua.png"
+                      }
+                      alt={`Foto ${candidate.nameKetua}`}
+                      className="object-cover w-full h-48"
+                      onError={(e) => {
+                        e.target.src = "/placeholder-ketua.png";
+                      }}
+                    />
+                    <div className="absolute bottom-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs px-2 py-1 rounded-tr-md font-medium">
+                      Ketua
+                    </div>
+                  </div>
+                  <div className="w-1/2 bg-gray-100 relative">
+                    <img
+                      src={
+                        formatImagePath(candidate.fotoWakil) ||
+                        "/placeholder-wakil.png"
+                      }
+                      alt={`Foto ${candidate.nameWakil}`}
+                      className="object-cover w-full h-48"
+                      onError={(e) => {
+                        e.target.src = "/placeholder-wakil.png";
+                      }}
+                    />
+                    <div className="absolute bottom-0 left-0 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs px-2 py-1 rounded-tr-md font-medium">
+                      Wakil
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-600 rounded-full px-3 py-1 text-xs font-bold inline-block">
+                    Pasangan #{candidate.id}
+                  </div>
+                  <div className="bg-gray-100 h-6 w-6 rounded-full flex items-center justify-center">
+                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                  </div>
+                </div>
+                <h3 className="font-bold text-lg text-gray-800 mb-3">
+                  {candidate.nameKetua} & {candidate.nameWakil}
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-sm text-indigo-600">
+                      Visi:
+                    </h4>
+                    <p className="text-gray-700 text-sm mt-1">
+                      {candidate.visi}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm text-purple-600">
+                      Misi:
+                    </h4>
+                    <p className="text-gray-700 text-sm mt-1">
+                      {candidate.misi}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  className={`mt-5 w-full ${
+                    hasVoted
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                  } text-white font-medium py-2.5 px-4 rounded-lg transition-colors shadow-sm flex items-center justify-center space-x-2`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!hasVoted) {
+                      handleSelectCandidate(candidate);
+                    }
+                  }}
+                  disabled={hasVoted}
+                >
+                  <span>{hasVoted ? "Sudah Memilih" : "Pilih Kandidat"}</span>
+                  {hasVoted ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Instructions Section */}
         <div className="mt-8 bg-gradient-to-r from-white to-indigo-50 rounded-xl p-6 border border-gray-100 shadow-sm">

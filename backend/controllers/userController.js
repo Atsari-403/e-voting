@@ -206,7 +206,6 @@ exports.voteCandidate = async (req, res) => {
   try {
     const userId = req.user.id;
     const { candidateId } = req.body;
-
     console.log("Attempting to vote:", {
       userId,
       candidateId,
@@ -218,6 +217,15 @@ exports.voteCandidate = async (req, res) => {
     if (!user) {
       console.log("User not found:", userId);
       return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    // Tambahkan validasi untuk mencegah user memilih lebih dari sekali
+    if (user.hasVoted) {
+      console.log("User has already voted:", userId);
+      return res.status(400).json({
+        message: "Anda sudah memberikan suara sebelumnya",
+        hasVoted: true,
+      });
     }
 
     console.log("Current user status:", {

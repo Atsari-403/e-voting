@@ -118,16 +118,20 @@ const AdminDashboardLayout = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      // Clear user data from context
-      updateUser(null);
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
-      // Clear localStorage and cookies
-      localStorage.removeItem("token");
-      document.cookie =
-        "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      if (response.ok) {
+        // Clear user data from context
+        updateUser(null);
 
-      // Redirect to login
-      navigate("/login");
+        // Redirect to login
+        navigate("/login");
+      } else {
+        throw new Error("Logout failed");
+      }
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -218,9 +222,7 @@ const AdminDashboardLayout = ({ children }) => {
           <div className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center">
               <img src={Logo} alt="E-Voting Logo" className="h-10" />
-              <h2 className="ml-2 text-lg font-bold text-blue-600">
-                E-Voting
-              </h2>
+              <h2 className="ml-2 text-lg font-bold text-blue-600">E-Voting</h2>
             </div>
             <button onClick={() => setMobileMenuOpen(false)}>
               <X size={24} className="text-gray-500" />

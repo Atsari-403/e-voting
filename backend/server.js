@@ -14,17 +14,19 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // sesuaikan dengan URL React-mu
-    credentials: true, // penting: izinkan kirim credentials (cookie/token)
+    origin: "http://localhost:5173", // URL frontend Anda
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET)); // Tambahkan secret key jika menggunakan signed cookies
 
 // Tambahkan middleware untuk serving static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 // Tambahkan route khusus untuk uploads jika diperlukan
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
