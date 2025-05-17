@@ -15,11 +15,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
+      "Design-Type",
       "Authorization",
       "cache-control",
       "Accept",
@@ -47,10 +48,26 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/candidates", candidateRoutes);
 
-// Sync DB dan buat admin default jika belum ada
+// Sync DB dan admin default
 sequelize.sync({ alter: true }).then(async () => {
   // console.log("Database connected & synced");
 
+  // const adminExists = await User.findOne({ where: { nim: "admin2" } });
+  // if (!adminExists) {
+  //   const bcrypt = require("bcryptjs")
+  //   const hashed = await bcrypt.hash("adminadmin", 10);
+  //   await User.create({
+  //     nim: "admin2",
+  //     name: "joko",
+  //     password: hashed,
+  //     role: "admin",
+  //   });
+  //   console.log(
+  //     "Admin default dibuat (nim: admin2, password: admin456)"
+  //   );
+  // }
+
+  // add mahasiswa default
   // const mahasiswaExists = await User.findOne({ where: { nim: "mahasiswa" } });
   // if (!mahasiswaExists) {
   //   const bcrypt = require("bcryptjs");

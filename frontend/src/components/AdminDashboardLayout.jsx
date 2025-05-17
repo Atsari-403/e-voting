@@ -35,37 +35,14 @@ const SidebarItem = ({ icon, text, active, collapsed, onClick }) => {
   );
 };
 
-// Profile Dropdown Component
-const ProfileDropdown = ({ user, onLogout }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+// Username Display Component
+const UsernameDisplay = ({ user }) => {
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 focus:outline-none"
-      >
-        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-          {user?.name?.charAt(0) || "A"}
-        </div>
-        <span className="hidden md:block text-sm">{user?.name || "Admin"}</span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-          <div className="px-4 py-2 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900">
-              {user?.name || "Admin"}
-            </p>
-          </div>
-          <button
-            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50"
-            onClick={onLogout}
-          >
-            <LogOut size={16} className="mr-2" /> Logout
-          </button>
-        </div>
-      )}
+    <div className="flex items-center space-x-2">
+      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+        {user?.name?.charAt(0) || "A"}
+      </div>
+      <span className="hidden md:block text-sm">{user?.name || "Admin"}</span>
     </div>
   );
 };
@@ -152,15 +129,15 @@ const AdminDashboardLayout = ({ children }) => {
       >
         <div className="flex flex-col h-full">
           {/* Logo dan Toggle Button */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-3 border-b-gray-300 border-b">
             {!collapsed ? (
               <div className="flex items-center">
                 <img
                   src={Logo}
                   alt="E-Voting Logo"
-                  className="h-10 transition-all"
+                  className="h-10 ml-2 transition-all"
                 />
-                <h2 className="ml-5 text-lg font-bold text-blue-600">
+                <h2 className="ml-10 text-lg font-bold text-blue-600">
                   E-Voting
                 </h2>
               </div>
@@ -171,7 +148,7 @@ const AdminDashboardLayout = ({ children }) => {
             )}
 
             {/* Collapse/Expand Button */}
-            <button
+            {/* <button
               className={`p-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 ${
                 collapsed ? "w-full flex justify-center" : ""
               }`}
@@ -182,7 +159,7 @@ const AdminDashboardLayout = ({ children }) => {
               ) : (
                 <ChevronLeft size={20} />
               )}
-            </button>
+            </button> */}
           </div>
 
           {/* Menu Items */}
@@ -200,6 +177,17 @@ const AdminDashboardLayout = ({ children }) => {
               ))}
             </ul>
           </nav>
+
+          {/* Logout button at bottom of sidebar */}
+          <div className="p-4 mt-auto">
+            <div
+              className="flex items-center p-2 rounded-md cursor-pointer transition duration-300 ease-in-out bg-red-500 hover:bg-red-100 text-white hover:text-red-500"
+              onClick={handleLogout}
+            >
+              <LogOut size={20} />
+              {!collapsed && <span className="ml-3">Logout</span>}
+            </div>
+          </div>
         </div>
       </aside>
 
@@ -219,10 +207,10 @@ const AdminDashboardLayout = ({ children }) => {
         style={{ width: "250px" }}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-4 border-b-gray-300 border-b">
             <div className="flex items-center">
-              <img src={Logo} alt="E-Voting Logo" className="h-10" />
-              <h2 className="ml-2 text-lg font-bold text-blue-600">E-Voting</h2>
+              <img src={Logo} alt="E-Voting Logo" className="h-10 ml-2" />
+              <h2 className="ml-10 text-lg font-bold text-blue-600">E-Voting</h2>
             </div>
             <button onClick={() => setMobileMenuOpen(false)}>
               <X size={24} className="text-gray-500" />
@@ -243,12 +231,23 @@ const AdminDashboardLayout = ({ children }) => {
               ))}
             </ul>
           </nav>
+
+          {/* Logout button for mobile sidebar */}
+          <div className="p-4">
+            <div
+              className="flex items-center p-2 rounded-md cursor-pointer transition-all duration-300 ease-in-out bg-red-500 hover:bg-red-100 text-white hover:text-red-500"
+              onClick={handleLogout}
+            >
+              <LogOut size={20} />
+              <span className="ml-3">Logout</span>
+            </div>
+          </div>
         </div>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navbar - disesuaikan tinggi dan paddingnya agar sejajar dengan sidebar */}
+        {/* Top Navbar */}
         <header className="bg-white shadow-sm z-10">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile menu button */}
@@ -259,14 +258,14 @@ const AdminDashboardLayout = ({ children }) => {
               <Menu size={24} />
             </button>
 
-            {/* Page title dinamis berdasarkan activeMenu */}
+            {/* Page title dinamis activeMenu */}
             <h1 className="text-lg font-semibold text-gray-800 md:ml-0">
               {menuItems.find((item) => item.id === activeMenu)?.text ||
                 "Dashboard"}
             </h1>
 
-            {/* User Profile */}
-            <ProfileDropdown user={user} onLogout={handleLogout} />
+            {/* Username display */}
+            <UsernameDisplay user={user} />
           </div>
         </header>
 

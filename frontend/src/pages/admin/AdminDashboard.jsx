@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
 import {
-  Activity,
+  // Activity,
+  Award,
   ArrowUp,
   Users,
   UserCheck,
   CheckSquare,
   XSquare,
 } from "lucide-react";
-import axios from "axios"; // Pastikan axios sudah diimport
+import axios from "axios";
 
 // Card Component
 const DashboardCard = ({ title, value, icon, color }) => {
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm">
+    <div className={`${color} rounded-lg p-4 shadow-sm`}>
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+          <h3 className="text-sm font-medium text-gray-800">{title}</h3>
           <p className="text-2xl font-semibold mt-1">{value}</p>
         </div>
-        <div className={`rounded-full p-2 ${color}`}>{icon}</div>
+        <div className="rounded-full p-2 bg-white bg-opacity-50">{icon}</div>
       </div>
     </div>
   );
@@ -28,36 +29,45 @@ const DashboardCard = ({ title, value, icon, color }) => {
 // Top Candidates Component
 const TopCandidates = ({ candidates }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
-      <h2 className="font-medium text-lg mb-4">Kandidat Teratas</h2>
-      {candidates.length > 0 ? (
-        <div className="space-y-4">
-          {candidates.map((candidate, index) => (
-            <div
-              key={candidate.id}
-              className="flex items-center justify-between"
-            >
-              <div className="flex items-center">
-                <div className="bg-gray-200 rounded-full h-10 w-10 flex items-center justify-center mr-3">
-                  {index + 1}
-                </div>
-                <div>
-                  <p className="font-medium">{candidate.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {candidate.votes} suara ({candidate.percentage}%)
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <ArrowUp size={16} className="ml-1 text-green-500" />
-              </div>
+<div className="bg-white rounded-xl shadow-lg p-6">
+  <div className="flex items-center text-gray-800 mb-5">
+    <Award className="text-amber-300 mr-2" size={22} />
+    <h2 className="font-semibold text-xl">Kandidat Teratas</h2>
+  </div>
+
+  {/* Daftar kandidat */}
+  {candidates && candidates.length > 0 ? (
+    <div className="space-y-4">
+      {candidates.map((candidate, index) => (
+        <div
+          key={candidate.id}
+          className="flex items-center justify-between p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-300"
+        >
+          <div className="flex items-center">
+            <div className="bg-blue-100 text-blue-700 font-bold rounded-full h-10 w-10 flex items-center justify-center mr-4 shadow-sm">
+              {index + 1}
             </div>
-          ))}
+            <div>
+              <p className="font-semibold text-gray-800">{candidate.name}</p>
+              <p className="text-sm text-gray-600">
+                {candidate.votes} suara ({parseFloat(candidate.percentage).toFixed(1)}%)
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <ArrowUp
+              size={20}
+              className="text-green-600 bg-green-200 rounded-full p-1 shadow"
+            />
+          </div>
         </div>
-      ) : (
-        <p className="text-gray-500 text-sm">Belum ada data kandidat</p>
-      )}
+      ))}
     </div>
+  ) : (
+    <p className="text-gray-500 text-sm text-center">Belum ada data kandidat</p>
+  )}
+</div>
+
   );
 };
 
@@ -79,55 +89,41 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [mahasiswaResponse, kandidatResponse] = await Promise.all([
+        const [mahasiswaResponse, voteResultsResponse] = await Promise.all([
           axios.get("http://localhost:5000/api/users", {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/candidates", {
+          axios.get("http://localhost:5000/api/users/vote-results", {
             withCredentials: true,
           }),
         ]);
 
-        // Filter mahasiswa (exclude admin)
+        // Filter mahasiswa
         const mahasiswaList = mahasiswaResponse.data.filter(
           (user) => user?.nim && user.nim !== "admin"
         );
 
         const totalMahasiswa = mahasiswaList.length;
-        const kandidatList = kandidatResponse.data;
         const totalVotes = mahasiswaList.filter(
           (m) => m.hasVoted === true
         ).length;
 
-        // console.log("Debug voting data:", {
-        //   totalMahasiswa,
-        //   totalVotes,
-        //   kandidatList: kandidatList.map((k) => ({
-        //     id: k.id,
-        //     name: `${k.nameKetua} & ${k.nameWakil}`,
-        //     votes: k.jumlah_suara || 0,
-        //   })),
-        // });
-
-        // Format kandidat data dengan perhitungan suara yang tepat
-        const formattedCandidates = kandidatList
-          .map((kandidat) => ({
+        // Format kandidat data dengan data dari vote-results
+        const formattedCandidates = voteResultsResponse.data.candidates.map(
+          (kandidat) => ({
             id: kandidat.id,
             name: `${kandidat.nameKetua} & ${kandidat.nameWakil}`,
-            votes: kandidat.jumlah_suara || 0,
-            percentage:
-              totalVotes > 0
-                ? (((kandidat.jumlah_suara || 0) / totalVotes) * 100).toFixed(1)
-                : "0.0",
-            trend: "up",
-          }))
-          // Sort kandidat berdasarkan jumlah suara (descending)
-          .sort((a, b) => b.votes - a.votes);
+            votes: kandidat.votes || 0,
+            percentage: kandidat.percentage,
+          })
+        );
+
+        // console.log("Formatted Candidates:", formattedCandidates); // Debug log
 
         // Update stats
         setStats({
           totalMahasiswa,
-          totalKandidat: kandidatList.length,
+          totalKandidat: formattedCandidates.length,
           sudahVoting: totalVotes,
           belumVoting: totalMahasiswa - totalVotes,
         });
@@ -147,8 +143,9 @@ const AdminDashboard = () => {
     // Initial fetch
     fetchDashboardData();
 
-    // Set up polling every 10 seconds
+    // Set up polling 10 seconds
     const interval = setInterval(() => {
+      console.log("Polling dashboard data...");
       fetchDashboardData();
     }, 10000);
 
@@ -156,13 +153,13 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, []); // Empty dependency array since we want this to run once on mount
 
-  // Tampilkan loading state selama proses fetch data
+  // loading state selama proses fetch data
   if (loading) {
     return (
       <AdminDashboardLayout>
         <div className="h-full flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
             <p className="mt-4 text-gray-600">Memuat data...</p>
           </div>
         </div>
@@ -196,29 +193,29 @@ const AdminDashboard = () => {
       <div className="space-y-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <DashboardCard 
+          <DashboardCard
             title="Total Mahasiswa"
             value={stats.totalMahasiswa.toLocaleString()}
-            icon={<Users size={24} className="text-blue-500" />}
-            color="bg-blue-100"
+            icon={<Users size={24} className="text-blue-600" />}
+            color="bg-blue-400"
           />
           <DashboardCard
             title="Total Kandidat"
             value={stats.totalKandidat.toLocaleString()}
-            icon={<UserCheck size={24} className="text-green-500" />}
-            color="bg-green-100"
+            icon={<UserCheck size={24} className="text-emerald-600" />}
+            color="bg-emerald-400"
           />
           <DashboardCard
             title="Sudah Voting"
             value={stats.sudahVoting.toLocaleString()}
-            icon={<CheckSquare size={24} className="text-purple-500" />}
-            color="bg-purple-100"
+            icon={<CheckSquare size={24} className="text-violet-600" />}
+            color="bg-violet-400"
           />
           <DashboardCard
             title="Belum Voting"
             value={stats.belumVoting.toLocaleString()}
-            icon={<XSquare size={24} className="text-orange-500" />}
-            color="bg-orange-100"
+            icon={<XSquare size={24} className="text-rose-600" />}
+            color="bg-rose-400"
           />
         </div>
 
@@ -228,7 +225,7 @@ const AdminDashboard = () => {
           <TopCandidates candidates={candidates} />
         </div>
         {lastUpdate && (
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-sm text-black mt-2">
             Terakhir diperbarui: {lastUpdate}
           </div>
         )}

@@ -19,8 +19,9 @@ const MahasiswaVoting = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
-  const [hasVoted, setHasVoted] = useState(false); // Add state to track if user has voted
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [hasVoted, setHasVoted] = useState(false); 
+  const [timeExpired, setTimeExpired] = useState(false); 
   const navigate = useNavigate();
 
   // Base URL untuk gambar
@@ -111,8 +112,10 @@ const MahasiswaVoting = () => {
   // Timer countdown
   useEffect(() => {
     if (timeLeft <= 0) {
-      alert("Waktu voting telah habis!");
-      navigate("/");
+      setTimeExpired(true);
+      setError(
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
+      );
       return;
     }
 
@@ -121,14 +124,21 @@ const MahasiswaVoting = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+  }, [timeLeft]);
 
   // Handle candidate selection
   const handleSelectCandidate = (candidate) => {
-    // Jika user sudah memilih, jangan izinkan untuk memilih lagi
+    // Jika user sudah memilih atau waktu habis, jangan izinkan untuk memilih
     if (hasVoted) {
       setError(
         "Anda sudah memberikan suara sebelumnya. Tidak dapat memilih kandidat lagi."
+      );
+      return;
+    }
+
+    if (timeExpired) {
+      setError(
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
       );
       return;
     }
@@ -139,6 +149,15 @@ const MahasiswaVoting = () => {
 
   // Submit vote
   const handleConfirmVote = async () => {
+    // Cek lagi jika waktu sudah habis sebelum mengirim vote
+    if (timeExpired) {
+      setError(
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
+      );
+      setShowConfirmation(false);
+      return;
+    }
+
     try {
       setLoading(true);
       // console.log("Sending vote request:", {
@@ -216,10 +235,16 @@ const MahasiswaVoting = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 py-2 px-4 rounded-lg text-white shadow-md flex items-center">
+            <div
+              className={`${
+                timeExpired
+                  ? "bg-red-600"
+                  : "bg-gradient-to-r from-blue-600 to-indigo-600"
+              } py-2 px-4 rounded-lg text-white shadow-md flex items-center`}
+            >
               <Clock className="w-4 h-4 mr-2" />
               <span className="font-mono font-medium">
-                {formatTime(timeLeft)}
+                {timeExpired ? "00:00" : formatTime(timeLeft)}
               </span>
             </div>
 
@@ -255,6 +280,26 @@ const MahasiswaVoting = () => {
         </div>
       )}
 
+      {/* Info Banner untuk Waktu Habis */}
+      {timeExpired && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 m-4 rounded-md shadow-sm">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-red-800">
+                Waktu voting telah habis!
+              </p>
+              <p className="text-sm text-red-700 mt-1">
+                Anda tidak dapat memberikan suara lagi karena batas waktu sudah
+                berakhir.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 bg-gradient-to-r from-white to-blue-50 p-6 rounded-xl shadow-sm border border-gray-100">
@@ -277,26 +322,31 @@ const MahasiswaVoting = () => {
           </div>
         )}
 
-        {error &&
-          !hasVoted && ( // Tampilkan error kecuali jika ini adalah pesan hasVoted yang sudah ditampilkan di banner
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <X className="h-5 w-5 text-red-500" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm">{error}</p>
-                </div>
+        {error && !hasVoted && !timeExpired && (
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <X className="h-5 w-5 text-red-500" />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm">{error}</p>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {candidates.map((candidate) => (
             <div
               key={candidate.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all transform hover:-translate-y-1 cursor-pointer"
-              onClick={() => handleSelectCandidate(candidate)}
+              className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all transform ${
+                !hasVoted && !timeExpired
+                  ? "hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+                  : ""
+              }`}
+              onClick={() =>
+                !hasVoted && !timeExpired && handleSelectCandidate(candidate)
+              }
             >
               {/* Pasangan Foto Kandidat */}
               {candidate.designType === "combined" ? (
@@ -382,21 +432,29 @@ const MahasiswaVoting = () => {
                 </div>
                 <button
                   className={`mt-5 w-full ${
-                    hasVoted
+                    hasVoted || timeExpired
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                   } text-white font-medium py-2.5 px-4 rounded-lg transition-colors shadow-sm flex items-center justify-center space-x-2`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!hasVoted) {
+                    if (!hasVoted && !timeExpired) {
                       handleSelectCandidate(candidate);
                     }
                   }}
-                  disabled={hasVoted}
+                  disabled={hasVoted || timeExpired}
                 >
-                  <span>{hasVoted ? "Sudah Memilih" : "Pilih Kandidat"}</span>
+                  <span>
+                    {hasVoted
+                      ? "Sudah Memilih"
+                      : timeExpired
+                      ? "Waktu Habis"
+                      : "Pilih Kandidat"}
+                  </span>
                   {hasVoted ? (
                     <Check className="h-4 w-4" />
+                  ) : timeExpired ? (
+                    <X className="h-4 w-4" />
                   ) : (
                     <CheckCircle className="h-4 w-4" />
                   )}
@@ -443,7 +501,10 @@ const MahasiswaVoting = () => {
                 <div className="bg-blue-100 h-5 w-5 rounded-full flex items-center justify-center mr-2">
                   <span className="text-blue-600 text-xs font-bold">4</span>
                 </div>
-                <span>Waktu voting dibatasi 15 menit</span>
+                <span>
+                  Waktu voting dibatasi 15 menit. Jika waktu habis, Anda tidak
+                  bisa memilih kandidat
+                </span>
               </li>
             </ul>
           </div>
@@ -554,12 +615,17 @@ const MahasiswaVoting = () => {
               <button
                 className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-4 rounded-lg font-medium shadow-sm flex justify-center items-center space-x-2"
                 onClick={handleConfirmVote}
-                disabled={loading}
+                disabled={loading || timeExpired}
               >
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white"></div>
                     <span>Memproses...</span>
+                  </>
+                ) : timeExpired ? (
+                  <>
+                    <span>Waktu Habis</span>
+                    <X className="h-4 w-4" />
                   </>
                 ) : (
                   <>

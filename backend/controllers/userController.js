@@ -1,7 +1,7 @@
 const User = require("../models/User");
-const Candidate = require("../models/Candidate"); // Add this import
+const Candidate = require("../models/Candidate");
 const bcrypt = require("bcryptjs");
-const sequelize = require("sequelize");
+const { sequelize } = require("../config/db")
 const { Op } = require("sequelize");
 const XLSX = require("xlsx");
 
@@ -203,77 +203,54 @@ exports.voteCandidate = async (req, res) => {
       candidateId: req.body.candidateId,
     });
 
-    const t = await sequelize.transaction();
+    // Check user status
+    const user = await User.findByPk(req.user.id);
 
-    try {
-      // Check user status
-      const user = await User.findByPk(req.user.id, {
-        transaction: t,
-        lock: true, // Add row-level locking
-      });
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
 
-      if (!user) {
-        await t.rollback();
-        return res.status(404).json({ message: "User tidak ditemukan" });
-      }
+    console.log("User before voting:", {
+      id: user.id,
+      hasVoted: user.hasVoted,
+    });
 
-      console.log("User before voting:", {
-        id: user.id,
-        hasVoted: user.hasVoted,
-      });
+    if (user.hasVoted) {
+      return res.status(400).json({ message: "Anda sudah melakukan voting" });
+    }
 
-      if (user.hasVoted) {
-        await t.rollback();
-        return res.status(400).json({ message: "Anda sudah melakukan voting" });
-      }
+    // Get candidate
+    const candidate = await Candidate.findByPk(req.body.candidateId);
 
-      // Get and update candidate with locking
-      const candidate = await Candidate.findByPk(req.body.candidateId, {
-        transaction: t,
-        lock: true, // Add row-level locking
-      });
+    if (!candidate) {
+      return res.status(404).json({ message: "Kandidat tidak ditemukan" });
+    }
 
-      if (!candidate) {
-        await t.rollback();
-        return res.status(404).json({ message: "Kandidat tidak ditemukan" });
-      }
+    console.log("Candidate before voting:", {
+      id: candidate.id,
+      votes: candidate.votes,
+    });
 
-      console.log("Candidate before voting:", {
+    // Update votes
+    candidate.votes = (candidate.votes || 0) + 1;
+    await candidate.save();
+
+    // Update user's voting status
+    user.hasVoted = true;
+    await user.save();
+
+    console.log("After voting:", {
+      candidateVotes: candidate.votes,
+      userHasVoted: user.hasVoted,
+    });
+
+    return res.status(200).json({
+      message: "Voting berhasil",
+      candidate: {
         id: candidate.id,
         votes: candidate.votes,
-      });
-
-      // Update votes directly instead of using increment
-      candidate.votes = (candidate.votes || 0) + 1;
-      await candidate.save({ transaction: t });
-
-      // Update user's voting status
-      user.hasVoted = true;
-      await user.save({ transaction: t });
-
-      // Reload both records to verify changes
-      await candidate.reload({ transaction: t });
-      await user.reload({ transaction: t });
-
-      console.log("After voting:", {
-        candidateVotes: candidate.votes,
-        userHasVoted: user.hasVoted,
-      });
-
-      await t.commit();
-
-      return res.status(200).json({
-        message: "Voting berhasil",
-        candidate: {
-          id: candidate.id,
-          votes: candidate.votes,
-        },
-      });
-    } catch (error) {
-      console.error("Transaction error:", error);
-      await t.rollback();
-      throw error;
-    }
+      },
+    });
   } catch (error) {
     console.error("Vote error:", error);
     return res.status(500).json({
