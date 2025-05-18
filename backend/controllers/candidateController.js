@@ -1,4 +1,3 @@
-// controllers/candidateController.js
 const Candidate = require("../models/Candidate");
 const fs = require("fs");
 const path = require("path");

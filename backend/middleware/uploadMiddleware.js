@@ -1,4 +1,3 @@
-// Middleware untuk menangani upload file berdasarkan designType
 const handleUpload = (req, res, next) => {
   // Baca designType dari header untuk menentukan jenis upload
   const designType = req.headers["design-type"];

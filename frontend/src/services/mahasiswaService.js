@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Base URL untuk API
+// Base URL API
 const API_URL = "http://localhost:5000/api";
 
 // Service untuk mengelola data mahasiswa

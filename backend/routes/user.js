@@ -4,7 +4,7 @@ const userController = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 const uploadExcel = require("../middleware/excelUpload");
 
-// Middleware untuk verifikasi admin
+// Middleware verifikasi admin
 const verifyAdmin = (req, res, next) => {
   if (req.user.role !== "admin") {
     return res
@@ -14,21 +14,21 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
-// Route untuk hasil voting
+// Route hasil voting
 router.get(
   "/vote-results",
   authMiddleware.verifyToken,
   userController.getVoteResults
 );
 
-// Route untuk vote kandidat
+// Route vote kandidat
 router.post(
   "/vote-candidate",
   authMiddleware.verifyToken,
   userController.voteCandidate
 );
 
-// Route untuk mengimpor mahasiswa dari file Excel
+// Route mengimpor mahasiswa dari file Excel
 router.post(
   "/import",
   authMiddleware.verifyToken,
@@ -37,7 +37,7 @@ router.post(
   userController.importUsers
 );
 
-// Route untuk mendapatkan semua mahasiswa
+// Route mendapatkan semua mahasiswa
 router.get(
   "/",
   authMiddleware.verifyToken,
@@ -45,7 +45,7 @@ router.get(
   userController.getAllUsers
 );
 
-// Route untuk mendapatkan detail mahasiswa berdasarkan ID
+// Route mendapatkan detail mahasiswa berdasarkan ID
 router.get(
   "/:id",
   authMiddleware.verifyToken,
@@ -53,7 +53,7 @@ router.get(
   userController.getUserById
 );
 
-// Route untuk menambahkan mahasiswa baru
+// Route menambahkan mahasiswa baru
 router.post(
   "/",
   authMiddleware.verifyToken,
@@ -61,7 +61,7 @@ router.post(
   userController.addUser
 );
 
-// Route untuk memperbarui data mahasiswa
+// Route memperbarui data mahasiswa
 router.put(
   "/:id",
   authMiddleware.verifyToken,
@@ -69,7 +69,7 @@ router.put(
   userController.updateUser
 );
 
-// Route untuk menghapus mahasiswa
+// Route menghapus mahasiswa
 router.delete(
   "/:id",
   authMiddleware.verifyToken,

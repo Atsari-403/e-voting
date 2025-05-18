@@ -428,7 +428,7 @@ const MahasiswaVoting = () => {
                         e.target.src = "/placeholder-ketua.png";
                       }}
                     />
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-white text-xs px-2 py-1 rounded-bl-md font-medium text-xs">
+                    <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-whitexs px-2 py-1 rounded-bl-md font-medium text-xs">
                       Ketua
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
@@ -450,7 +450,7 @@ const MahasiswaVoting = () => {
                         e.target.src = "/placeholder-wakil.png";
                       }}
                     />
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-purple-600 to-pink-500 text-white text-xs px-2 py-1 rounded-bl-md font-medium text-xs">
+                    <div className="absolute top-0 right-0 bg-gradient-to-l from-purple-600 to-pink-500 text-white px-2 py-1 rounded-bl-md font-medium text-xs">
                       Wakil
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
@@ -544,7 +544,7 @@ const MahasiswaVoting = () => {
             <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-2 sm:p-3 rounded-full mr-3 sm:mr-4 shadow-md">
               <Info className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-gray-800 bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text">
               Petunjuk Voting
             </h3>
           </div>

@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// Fungsi registrasi
 exports.login = async (req, res) => {
   try {
     const { nim, password } = req.body;
@@ -22,14 +23,15 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Perbaikan cookie settings
+    // cookie settings
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 3600000, // 1 jam
-      secure: process.env.NODE_ENV === "production", // Hanya set secure jika di production
-      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production", // set scure di production
+      sameSite: "Strict", // SameSite untuk mencegah CSRF
+      // SameSite: "Lax", // Jika menggunakan frontend di domain yang berbeda
       path: "/",
-      domain: undefined, // Jangan set domain secara eksplisit
+      domain: undefined,
     });
 
     res.status(200).json({
@@ -51,6 +53,7 @@ exports.login = async (req, res) => {
   }
 };
 
+//mendapatkan data user yang sedang login
 exports.getMe = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -72,14 +75,15 @@ exports.getMe = async (req, res) => {
   }
 };
 
+// mendapatkan semua user
 exports.logout = async (req, res) => {
   try {
     // Hapus cookie token
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // Sama dengan login
-      path: "/", // Tambahkan path yang sama dengan login
+      sameSite: "lax",
+      path: "/", 
     });
 
     return res.status(200).json({ message: "Logout berhasil" });

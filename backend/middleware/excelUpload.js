@@ -3,7 +3,7 @@ const XLSX = require("xlsx");
 const path = require("path");
 const fs = require("fs");
 
-// Konfigurasi penyimpanan untuk multer
+// Konfigurasi penyimpanan file
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = path.join(__dirname, "../uploads");
@@ -75,7 +75,7 @@ const processExcel = (req, res, next) => {
 
     // Validasi struktur kolom yang diperlukan
     if (!hasNIM || !hasName || !hasPassword) {
-      // Hapus file karena struktur tidak sesuai
+      // Hapus file jika struktur tidak sesuai
       fs.unlinkSync(filePath);
       return res.status(400).json({
         message:
