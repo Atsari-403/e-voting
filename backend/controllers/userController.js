@@ -269,17 +269,17 @@ exports.getVoteResults = async (req, res) => {
       where: { hasVoted: true },
       attributes: ["id", "nim", "name"],
     });
-    console.log("Voters who have voted:", voters);
+    // console.log("Voters who have voted:", voters);
 
     const totalVoters = voters.length;
-    console.log("Total voters:", totalVoters);
+    // console.log("Total voters:", totalVoters);
 
     // Get candidates with vote counts
     const candidates = await Candidate.findAll({
       attributes: ["id", "nameKetua", "nameWakil", "votes"],
       order: [["votes", "DESC"]],
     });
-    console.log("Candidates with votes:", candidates);
+    // console.log("Candidates with votes:", candidates);
 
     const response = {
       candidates: candidates.map((c) => ({
@@ -291,7 +291,7 @@ exports.getVoteResults = async (req, res) => {
       lastUpdated: new Date().toISOString(),
     };
 
-    console.log("Full response:", response);
+    // console.log("Full response:", response);
     res.status(200).json(response);
   } catch (error) {
     console.error("Error in getVoteResults:", error);

@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const sequelize = require("./config/db");
-const path = require("path"); // Tambahkan import path
+const path = require("path"); // import path
 const authRoutes = require("./routes/auth");
 // const User = require("./models/User");
 // const Candidate = require("./models/Candidate");
@@ -31,14 +31,14 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET)); // Tambahkan secret key jika menggunakan signed cookies
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// Tambahkan middleware untuk serving static files
+// middleware untuk serving static files
 app.use(express.static(path.join(__dirname, "public")));
-// Tambahkan route khusus untuk uploads jika diperlukan
+// route khusus untuk uploads jika diperlukan
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Tambahkan sebelum routes
+// sebelum routes
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();

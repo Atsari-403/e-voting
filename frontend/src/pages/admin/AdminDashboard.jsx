@@ -145,7 +145,7 @@ const AdminDashboard = () => {
 
     // Set up polling 10 seconds
     const interval = setInterval(() => {
-      console.log("Polling dashboard data...");
+      // console.log("Polling dashboard data...");
       fetchDashboardData();
     }, 10000);
 

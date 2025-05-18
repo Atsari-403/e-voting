@@ -124,7 +124,7 @@ const AdminDashboardLayout = ({ children }) => {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar untuk desktop */}
       <aside
-        className={`bg-white shadow-md transition-all duration-300 hidden md:block
+        className={`bg-white shadow-md transition-all duration-300 hidden md:block border-r border-gray-200
           ${collapsed ? "w-16" : "w-64"}`}
       >
         <div className="flex flex-col h-full">
@@ -202,7 +202,7 @@ const AdminDashboardLayout = ({ children }) => {
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-white shadow-lg z-30 transform transition-transform duration-300 ease-in-out md:hidden
+        className={`fixed left-0 top-0 h-full bg-white shadow-lg z-30 transform transition-transform duration-300 ease-in-out md:hidden border-r border-gray-200
           ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
         style={{ width: "250px" }}
       >
@@ -210,7 +210,9 @@ const AdminDashboardLayout = ({ children }) => {
           <div className="flex items-center justify-between p-4 border-b-gray-300 border-b">
             <div className="flex items-center">
               <img src={Logo} alt="E-Voting Logo" className="h-10 ml-2" />
-              <h2 className="ml-10 text-lg font-bold text-blue-600">E-Voting</h2>
+              <h2 className="ml-10 text-lg font-bold text-blue-600">
+                E-Voting
+              </h2>
             </div>
             <button onClick={() => setMobileMenuOpen(false)}>
               <X size={24} className="text-gray-500" />
@@ -248,7 +250,7 @@ const AdminDashboardLayout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
-        <header className="bg-white shadow-sm z-10">
+        <header className="bg-white shadow-sm z-10 border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile menu button */}
             <button

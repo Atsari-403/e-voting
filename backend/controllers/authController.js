@@ -26,8 +26,8 @@ exports.login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 3600000, // 1 jam
-      secure: false, // PASTIKAN false untuk development
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // Hanya set secure jika di production
+      sameSite: "Strict",
       path: "/",
       domain: undefined, // Jangan set domain secara eksplisit
     });

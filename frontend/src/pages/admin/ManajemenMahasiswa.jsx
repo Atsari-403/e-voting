@@ -54,7 +54,7 @@ const ManajemenMahasiswa = () => {
 
     // Polling setiap 10 detik
     const interval = setInterval(() => {
-      console.log("Memulai polling data...");
+      // console.log("Memulai polling data...");
       fetchMahasiswas();
     }, 10000);
 

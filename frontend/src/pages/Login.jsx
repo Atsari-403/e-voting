@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import BgLogin from "../assets/bglogin.jpg";
+
+
 export default function Login() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
@@ -55,6 +57,7 @@ export default function Login() {
         backgroundBlendMode: "overlay",
       }}
     >
+      
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center">
@@ -65,13 +68,11 @@ export default function Login() {
           </h2>
           <p className="mt-2 text-gray-600">Silahkan login untuk melanjutkan</p>
         </div>
-
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
             <p>{error}</p>
           </div>
         )}
-
         <form onSubmit={handleLogin}>
           <div className="space-y-6">
             <div>
@@ -155,7 +156,7 @@ export default function Login() {
             </button>
           </div>
         </form>
-
+        
         <div className="mt-8 text-center text-sm text-gray-600">
           &copy; {new Date().getFullYear()} Sistem E-Voting
         </div>
