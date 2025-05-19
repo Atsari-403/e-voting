@@ -19,18 +19,35 @@ import Logo from "../assets/Logo.png";
 const SidebarItem = ({ icon, text, active, collapsed, onClick }) => {
   return (
     <li
-      className={`flex items-center p-2 my-1 rounded-md cursor-pointer transition-all mb-2
+      className={`flex items-center p-3 my-1 rounded-lg cursor-pointer transition-all duration-200 group relative
         ${
           active
-            ? "bg-blue-500 text-white"
-            : "hover:bg-blue-100 text-gray-700 hover:text-blue-500"
+            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+            : "hover:bg-blue-50 text-gray-700 hover:text-blue-600"
         }`}
       onClick={onClick}
     >
-      <div className="flex items-center">
-        <span className={`text-lg ${active ? "text-white" : ""}`}>{icon}</span>
-        {!collapsed && <span className="ml-3 transition-all">{text}</span>}
+      <div className="flex items-center w-full">
+        <span
+          className={`text-lg ${
+            active ? "text-white" : "group-hover:text-blue-600"
+          }`}
+        >
+          {icon}
+        </span>
+        {!collapsed && (
+          <span className="ml-3 transition-all duration-200 font-medium">
+            {text}
+          </span>
+        )}
       </div>
+
+      {/* Tooltip for collapsed state */}
+      {collapsed && (
+        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+          {text}
+        </div>
+      )}
     </li>
   );
 };
@@ -38,11 +55,16 @@ const SidebarItem = ({ icon, text, active, collapsed, onClick }) => {
 // Username Display Component
 const UsernameDisplay = ({ user }) => {
   return (
-    <div className="flex items-center space-x-2">
-      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-        {user?.name?.charAt(0) || "A"}
+    <div className="flex items-center space-x-3">
+      <div className="w-9 h-9 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+        {user?.name?.charAt(0).toUpperCase() || "A"}
       </div>
-      <span className="hidden md:block text-sm">{user?.name || "Admin"}</span>
+      <div className="hidden md:block">
+        <span className="text-sm font-medium text-gray-700">
+          {user?.name || "Admin"}
+        </span>
+        <p className="text-xs text-gray-500">Administrator</p>
+      </div>
     </div>
   );
 };
@@ -124,47 +146,55 @@ const AdminDashboardLayout = ({ children }) => {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar untuk desktop */}
       <aside
-        className={`bg-white shadow-md transition-all duration-300 hidden md:block border-r border-gray-200
-          ${collapsed ? "w-16" : "w-64"}`}
+        className={`bg-white shadow-lg transition-all duration-300 hidden md:block border-r border-gray-100
+          ${collapsed ? "w-20" : "w-64"}`}
       >
         <div className="flex flex-col h-full">
           {/* Logo dan Toggle Button */}
-          <div className="flex items-center justify-between p-3 border-b-gray-300 border-b">
+          <div
+            className={`flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100 ${
+              collapsed ? "px-3" : "px-6"
+            }`}
+          >
             {!collapsed ? (
               <div className="flex items-center">
                 <img
                   src={Logo}
                   alt="E-Voting Logo"
-                  className="h-10 ml-2 transition-all"
+                  className="h-10 w-10 "
                 />
-                <h2 className="ml-10 text-lg font-bold text-blue-600">
+                <h2 className="ml-7 text-xl font-bold text-black">
                   E-Voting
                 </h2>
               </div>
             ) : (
               <div className="flex justify-center w-full">
-                {/* Placeholder saat collapsed */}
+                <img
+                  src={Logo}
+                  alt="E-Voting Logo"
+                  className="h-8 w-8 rounded-lg shadow-sm"
+                />
               </div>
             )}
 
             {/* Collapse/Expand Button */}
             {/* <button
-              className={`p-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 ${
-                collapsed ? "w-full flex justify-center" : ""
+              className={`p-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors duration-200 shadow-sm ${
+                collapsed ? "w-8 h-8 flex items-center justify-center" : ""
               }`}
               onClick={() => setCollapsed(!collapsed)}
             >
               {collapsed ? (
-                <ChevronRight size={20} />
+                <ChevronRight size={16} />
               ) : (
-                <ChevronLeft size={20} />
+                <ChevronLeft size={16} />
               )}
             </button> */}
           </div>
 
           {/* Menu Items */}
-          <nav className="flex-1 px-2 py-4 overflow-y-auto">
-            <ul>
+          <nav className="flex-1 px-3 py-6 overflow-y-auto">
+            <ul className="space-y-1">
               {menuItems.map((item) => (
                 <SidebarItem
                   key={item.id}
@@ -179,13 +209,20 @@ const AdminDashboardLayout = ({ children }) => {
           </nav>
 
           {/* Logout button at bottom of sidebar */}
-          <div className="p-4 mt-auto">
+          <div className="p-3 border-t border-gray-100">
             <div
-              className="flex items-center p-2 rounded-md cursor-pointer transition duration-300 ease-in-out bg-red-500 hover:bg-red-100 text-white hover:text-red-500"
+              className="flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 bg-red-200 hover:bg-red-500 text-red-600 hover:text-white group shadow-sm"
               onClick={handleLogout}
             >
               <LogOut size={20} />
-              {!collapsed && <span className="ml-3">Logout</span>}
+              {!collapsed && <span className="ml-3 font-medium">Logout</span>}
+
+              {/* Tooltip for collapsed state */}
+              {collapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                  Logout
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -194,7 +231,7 @@ const AdminDashboardLayout = ({ children }) => {
       {/* Mobile sidebar overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-20 md:hidden"
+          className="fixed inset-0 z-20 md:hidden transition-opacity duration-300"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
           onClick={() => setMobileMenuOpen(false)}
         />
@@ -202,25 +239,30 @@ const AdminDashboardLayout = ({ children }) => {
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-white shadow-lg z-30 transform transition-transform duration-300 ease-in-out md:hidden border-r border-gray-200
+        className={`fixed left-0 top-0 h-full bg-white shadow-xl z-30 transform transition-transform duration-300 ease-in-out md:hidden border-r border-gray-100
           ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
-        style={{ width: "250px" }}
+        style={{ width: "280px" }}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b-gray-300 border-b">
+          <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100">
             <div className="flex items-center">
-              <img src={Logo} alt="E-Voting Logo" className="h-10 ml-2" />
-              <h2 className="ml-10 text-lg font-bold text-blue-600">
-                E-Voting
-              </h2>
+              <img
+                src={Logo}
+                alt="E-Voting Logo"
+                className="h-10 w-10 rounded-lg shadow-sm"
+              />
+              <h2 className="ml-8 text-xl font-bold text-black">E-Voting</h2>
             </div>
-            <button onClick={() => setMobileMenuOpen(false)}>
-              <X size={24} className="text-gray-500" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            >
+              <X size={20} className="text-gray-500" />
             </button>
           </div>
 
-          <nav className="flex-1 px-2 py-4 overflow-y-auto">
-            <ul>
+          <nav className="flex-1 px-4 py-6 overflow-y-auto">
+            <ul className="space-y-1">
               {menuItems.map((item) => (
                 <SidebarItem
                   key={item.id}
@@ -235,13 +277,13 @@ const AdminDashboardLayout = ({ children }) => {
           </nav>
 
           {/* Logout button for mobile sidebar */}
-          <div className="p-4">
+          <div className="p-4 border-t border-gray-100">
             <div
-              className="flex items-center p-2 rounded-md cursor-pointer transition-all duration-300 ease-in-out bg-red-500 hover:bg-red-100 text-white hover:text-red-500"
+              className="flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 bg-red-200 hover:bg-red-500 text-red-600 hover:text-white shadow-sm"
               onClick={handleLogout}
             >
               <LogOut size={20} />
-              <span className="ml-3">Logout</span>
+              <span className="ml-3 font-medium">Logout</span>
             </div>
           </div>
         </div>
@@ -250,24 +292,28 @@ const AdminDashboardLayout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
-        <header className="bg-white shadow-sm z-10 border-b border-gray-200">
+        <header className="bg-white shadow-md z-10 border-b border-gray-100">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile menu button */}
             <button
-              className="md:hidden text-gray-500 focus:outline-none"
+              className="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
               onClick={() => setMobileMenuOpen(true)}
             >
               <Menu size={24} />
             </button>
 
             {/* Page title dinamis activeMenu */}
-            <h1 className="text-lg font-semibold text-gray-800 md:ml-0">
-              {menuItems.find((item) => item.id === activeMenu)?.text ||
-                "Dashboard"}
-            </h1>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-800 md:ml-0">
+                {menuItems.find((item) => item.id === activeMenu)?.text ||
+                  "Dashboard"}
+              </h1>
+            </div>
 
             {/* Username display */}
-            <UsernameDisplay user={user} />
+            <div className="flex items-center space-x-4">
+              <UsernameDisplay user={user} />
+            </div>
           </div>
         </header>
 

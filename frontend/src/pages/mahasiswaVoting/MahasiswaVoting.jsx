@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/Logo.png";
+import logo from "../../assets/Logo.png"; 
 import {
   Clock,
   CheckCircle,

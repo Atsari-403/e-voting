@@ -3,8 +3,8 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManajemenMahasiswa from "./pages/admin/ManajemenMahasiswa";
 import ManajemenKandidat from "./pages/admin/ManajemenKandidat";
-import HasilVoting from "./pages/admin/HasilVoting";
-import MahasiswaVoting from "./pages/MahasiswaVoting";
+import HasilVotingPage from "./pages/admin/HasilVotingPage";
+import MahasiswaVoting from "../src/pages/mahasiswaVoting/MahasiswaVoting";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRedirect from "./components/AuthRedirect";
 import { UserProvider } from "./contexts/UserContext";
@@ -57,7 +57,7 @@ function App() {
           path="hasil/voting"
           element={
             <ProtectedRoute roleAllowed="admin">
-              <HasilVoting />
+              <HasilVotingPage />
             </ProtectedRoute>
           }
         />

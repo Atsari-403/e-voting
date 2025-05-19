@@ -226,7 +226,7 @@ const AdminDashboard = () => {
         "Gagal memuat data: " + (error.response?.data?.message || error.message)
       );
     } finally {
-      setIsRefreshing(false);
+      // setIsRefreshing(false);
     }
   };
 
@@ -304,7 +304,7 @@ const AdminDashboard = () => {
           <DashboardCard
             title="Total Mahasiswa"
             value={stats.totalMahasiswa.toLocaleString()}
-            icon={<Users size={24} className="text-blue-600" />}
+            icon={<Users size={24} className="text-blue-60" />}
             color="text-blue-600"
             bgColor="bg-blue-200"
             textColor="text-blue-800"
