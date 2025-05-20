@@ -145,7 +145,7 @@ const VotingStats = ({ sudahVoting, totalMahasiswa }) => {
         ></div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 text-center">
+      {/* <div className="grid grid-cols-2 gap-4 text-center">
         <div className="bg-green-100 p-4 rounded-lg">
           <p className="text-xl font-bold text-green-700">{sudahVoting}</p>
           <p className="text-sm text-gray-600">Sudah Voting</p>
@@ -156,7 +156,7 @@ const VotingStats = ({ sudahVoting, totalMahasiswa }) => {
           </p>
           <p className="text-sm text-gray-600">Belum Voting</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

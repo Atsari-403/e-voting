@@ -262,7 +262,7 @@ exports.voteCandidate = async (req, res) => {
 
 exports.getVoteResults = async (req, res) => {
   try {
-    console.log("Fetching vote results...");
+    // console.log("Fetching vote results...");
 
     // Get voters with details
     const voters = await User.findAll({

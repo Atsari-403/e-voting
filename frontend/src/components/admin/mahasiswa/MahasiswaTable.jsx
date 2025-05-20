@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Edit3, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Edit3,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 const MahasiswaTable = ({
   mahasiswas,
@@ -12,27 +19,70 @@ const MahasiswaTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Filter mahasiswa berdasarkan pencarian
-  const filteredMahasiswas = mahasiswas.filter(
-    (mahasiswa) =>
-      mahasiswa.nim.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (mahasiswa.name &&
-        mahasiswa.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  // Sorting state
+  const [sortField, setSortField] = useState("nim");
+  const [sortDirection, setSortDirection] = useState("asc");
+
+  // Menangani pengurutan
+  const handleSort = (field) => {
+    // Jika field yang sama diklik, ubah arah pengurutan
+    if (field === sortField) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Jika field berbeda, atur field baru dan arah ke ascending
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  // Filter dan urutkan mahasiswa
+  const sortedAndFilteredMahasiswas = [...mahasiswas]
+    .filter(
+      (mahasiswa) =>
+        mahasiswa.nim.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (mahasiswa.name &&
+          mahasiswa.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => {
+      // Handle untuk kolom NIM
+      if (sortField === "nim") {
+        if (sortDirection === "asc") {
+          return a.nim.localeCompare(b.nim, undefined, { numeric: true });
+        } else {
+          return b.nim.localeCompare(a.nim, undefined, { numeric: true });
+        }
+      }
+      // Handle untuk kolom nama
+      else if (sortField === "name") {
+        // Handle jika nama null atau undefined
+        const nameA = a.name || "";
+        const nameB = b.name || "";
+
+        if (sortDirection === "asc") {
+          return nameA.localeCompare(nameB);
+        } else {
+          return nameB.localeCompare(nameA);
+        }
+      }
+      // Default
+      return 0;
+    });
 
   // Get current items
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredMahasiswas.slice(
+  const currentItems = sortedAndFilteredMahasiswas.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
-  const totalPages = Math.ceil(filteredMahasiswas.length / itemsPerPage);
+  const totalPages = Math.ceil(
+    sortedAndFilteredMahasiswas.length / itemsPerPage
+  );
 
-  // Reset to first page when search changes
+  // Reset to first page when search or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, sortField, sortDirection]);
 
   // Page change handler
   const handlePageChange = (pageNumber) => {
@@ -46,6 +96,18 @@ const MahasiswaTable = ({
       </div>
     );
   }
+
+  // Render sort icon based on current sort state
+  const renderSortIcon = (field) => {
+    if (sortField !== field) {
+      return <span className="text-gray-300 ml-1">↕</span>;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp size={14} className="inline ml-1 text-blue-600" />
+    ) : (
+      <ArrowDown size={14} className="inline ml-1 text-blue-600" />
+    );
+  };
 
   return (
     <div className="overflow-x-auto rounded-lg shadow relative">
@@ -71,11 +133,23 @@ const MahasiswaTable = ({
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gradient-to-r from-blue-500 to-blue-600">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              NIM
+            <th
+              className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("nim")}
+            >
+              <div className="flex items-center">
+                NIM
+                {renderSortIcon("nim")}
+              </div>
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Nama
+            <th
+              className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("name")}
+            >
+              <div className="flex items-center">
+                Nama
+                {renderSortIcon("name")}
+              </div>
             </th>
             <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Status Voting
@@ -157,12 +231,12 @@ const MahasiswaTable = ({
         </tbody>
       </table>
 
-      {filteredMahasiswas.length > 0 && (
+      {sortedAndFilteredMahasiswas.length > 0 && (
         <div className="bg-gray-50 px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="text-xs text-gray-500 mb-3 sm:mb-0">
             Menampilkan {indexOfFirstItem + 1}-
-            {Math.min(indexOfLastItem, filteredMahasiswas.length)} dari{" "}
-            {filteredMahasiswas.length} data mahasiswa
+            {Math.min(indexOfLastItem, sortedAndFilteredMahasiswas.length)} dari{" "}
+            {sortedAndFilteredMahasiswas.length} data mahasiswa
           </div>
 
           {/* Pagination controls */}

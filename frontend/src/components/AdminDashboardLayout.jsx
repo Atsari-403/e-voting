@@ -5,8 +5,8 @@ import {
   Menu,
   X,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
+  // ChevronLeft,
+  // ChevronRight,
   LayoutDashboard,
   Users,
   UserCheck,
@@ -63,7 +63,6 @@ const UsernameDisplay = ({ user }) => {
         <span className="text-sm font-medium text-gray-700">
           {user?.name || "Admin"}
         </span>
-        <p className="text-xs text-gray-500">Administrator</p>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/Logo.png"; 
+import logo from "../../assets/Logo.png";
 import {
   Clock,
   CheckCircle,
@@ -371,7 +371,7 @@ const MahasiswaVoting = () => {
 
         {/* Candidate Cards with Improved Responsive Visual Design */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {candidates.map((candidate) => (
+          {candidates.map((candidate, index) => (
             <div
               key={candidate.id}
               className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 transform ${
@@ -383,12 +383,12 @@ const MahasiswaVoting = () => {
                 !hasVoted && !timeExpired && handleSelectCandidate(candidate)
               }
             >
-              {/* Badge penunjuk nomor pasangan */}
+              {/* Badge penunjuk nomor pasangan - DIMODIFIKASI */}
               <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
                 <div className="bg-white shadow-md rounded-full px-2 sm:px-3 py-1 flex items-center space-x-1">
                   <Star className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-500 fill-yellow-500" />
                   <span className="text-xs font-bold text-gray-800">
-                    Pasangan #{candidate.id}
+                    Pasangan #{index + 1}
                   </span>
                 </div>
               </div>
@@ -624,8 +624,11 @@ const MahasiswaVoting = () => {
                 <div className="font-medium text-gray-800 flex items-center">
                   <Award className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 mr-2" />
                   <span>
-                    Pasangan #{selectedCandidate.id} -{" "}
-                    {selectedCandidate.nameKetua} &{" "}
+                    Pasangan #
+                    {candidates.findIndex(
+                      (c) => c.id === selectedCandidate.id
+                    ) + 1}{" "}
+                    - {selectedCandidate.nameKetua} &{" "}
                     {selectedCandidate.nameWakil}
                   </span>
                 </div>
