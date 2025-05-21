@@ -134,7 +134,7 @@ export default function Login() {
         </form>
 
         <div className="mt-8 text-center text-sm text-gray-600">
-          &copy; {new Date().getFullYear()}               E-Voting
+          &copy; {new Date().getFullYear()}               zE-Voting
         </div>
       </div>
     </div>

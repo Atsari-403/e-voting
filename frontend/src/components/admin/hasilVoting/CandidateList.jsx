@@ -1,24 +1,12 @@
 import React from "react";
+import { CheckCircle } from "lucide-react";
 
 const CandidateList = ({ candidates }) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 lg:col-span-2">
       <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
         <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-yellow-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <CheckCircle className="h-5 w-5 text-yellow-600" />
         </div>
         Perolehan Suara Kandidat
       </h3>
@@ -37,9 +25,7 @@ const CandidateList = ({ candidates }) => {
                   <h4 className="font-medium text-gray-900">
                     {candidate.nameKetua} & {candidate.nameWakil}
                   </h4>
-                  <p className="text-sm text-gray-500">
-                    Kandidat {index + 1}
-                  </p>
+                  <p className="text-sm text-gray-500">Kandidat {index + 1}</p>
                 </div>
               </div>
               <div className="text-right">

@@ -21,7 +21,7 @@ const MahasiswaVoting = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(30); // Waktu voting
+  const [timeLeft, setTimeLeft] = useState(60); // Waktu voting selama 60 detik
   const [hasVoted, setHasVoted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
   const [userData, setUserData] = useState(null);
