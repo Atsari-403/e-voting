@@ -6,6 +6,7 @@ import {
   ChevronRight,
   ArrowUp,
   ArrowDown,
+  ArrowRight,
 } from "lucide-react";
 
 const MahasiswaTable = ({
@@ -113,20 +114,7 @@ const MahasiswaTable = ({
     <div className="overflow-x-auto rounded-lg shadow relative">
       {/* Mobile scroll indicator */}
       <div className="md:hidden bg-blue-50 px-3 py-2 text-xs text-blue-600 border-b border-blue-100 flex items-center">
-        <svg
-          className="w-4 h-4 mr-1"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16 20L21 15M21 15L16 10M21 15H3"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ArrowRight className="w-4 h-4 mr-1" />
         Geser untuk melihat semua data
       </div>
 

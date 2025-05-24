@@ -3,8 +3,6 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-// Middleware untuk memverifikasi token JWT
-// Menggunakan cookie untuk menyimpan token
 exports.verifyToken = (req, res, next) => {
 
   const token = req.cookies.token;

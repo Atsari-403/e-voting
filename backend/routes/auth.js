@@ -8,3 +8,4 @@ router.get("/me", verifyToken, authController.getMe);
 router.post("/logout", authController.logout);
 
 module.exports = router;
+    
