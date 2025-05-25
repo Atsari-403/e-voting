@@ -3,9 +3,9 @@ import { Trash2, User, Award } from "lucide-react";
 
 const CandidateCard = ({ candidate, onDelete }) => {
   const handleDelete = () => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus kandidat ini?")) {
-      onDelete(candidate.id);
-    }
+    // onDelete tanpa konfirmasi window.confirm
+    // Konfirmasi akan ditangani oleh SweetAlert di useCandidates hook
+    onDelete(candidate.id, `${candidate.nameKetua} & ${candidate.nameWakil}`);
   };
 
   return (

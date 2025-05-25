@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
 import ModalComponent from "../../components/admin/common/ModalComponent";
 import {
@@ -9,177 +9,85 @@ import {
   MahasiswaSearchBar,
   MahasiswaActionButtons,
 } from "../../components/admin/mahasiswa";
-import mahasiswaService from "../../services/mahasiswaService";
+
+// Custom Hooks
+import {
+  useMahasiswa,
+  useMahasiswaModals,
+  useFileUpload,
+  useSearch,
+} from "../../hooks";
 
 const ManajemenMahasiswa = () => {
-  // State
-  const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [mahasiswas, setMahasiswas] = useState([]);
-  const [selectedMahasiswa, setSelectedMahasiswa] = useState(null);
-  const [deleteUserId, setDeleteUserId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  // Data & Operations
+  const {
+    mahasiswas,
+    isLoading,
+    addMahasiswa,
+    updateMahasiswa,
+    deleteMahasiswa,
+    importFromExcel,
+  } = useMahasiswa();
 
-  const fileInputRef = useRef(null);
+  // Modal States
+  const {
+    showAddModal,
+    openAddModal,
+    closeAddModal,
+    showEditModal,
+    selectedMahasiswa,
+    openEditModal,
+    closeEditModal,
+    showDeleteModal,
+    deleteUserId,
+    openDeleteModal,
+    closeDeleteModal,
+  } = useMahasiswaModals();
 
-  // Fungsi untuk mengambil data mahasiswa
-  const fetchMahasiswas = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      // console.log("Mengambil data mahasiswa...");
-      const data = await mahasiswaService.getAllMahasiswa();
+  // Search Functionality
+  const { searchTerm, setSearchTerm } = useSearch(mahasiswas, [
+    "nim",
+    "name",
+    "email",
+  ]);
 
-      // Debug setiap user
-      // data.forEach((user) => {
-      //   console.log("Data mahasiswa:", {
-      //     nim: user.nim,
-      //     nama: user.name,
-      //     hasVoted: user.hasVoted,
-      //     tipeData: typeof user.hasVoted,
-      //   });
-      // });
+  // File Upload
+  const { fileInputRef } = useFileUpload(importFromExcel);
 
-      setMahasiswas(data);
-    } catch (error) {
-      console.error("Error fetch:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchMahasiswas(); // Initial fetch
-
-    // Polling setiap 10 detik
-    const interval = setInterval(() => {
-      // console.log("Memulai polling data...");
-      fetchMahasiswas();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchMahasiswas]);
-
-  // Handler tambah mahasiswa
+  // Event Handlers
   const handleAddMahasiswa = async (userData) => {
-    try {
-      await mahasiswaService.addMahasiswa(userData);
-      setShowModal(false);
-      fetchMahasiswas();
-    } catch (error) {
-      alert(
-        "Gagal menambahkan mahasiswa: " +
-          (error.response?.data?.message || error.message || "Error")
-      );
+    const result = await addMahasiswa(userData);
+    if (result.success) {
+      closeAddModal();
     }
   };
 
-  // Handler edit mahasiswa
   const handleEditMahasiswa = async (userData) => {
-    try {
-      await mahasiswaService.updateMahasiswa(userData.id, userData);
-      setShowEditModal(false);
-      setSelectedMahasiswa(null);
-      fetchMahasiswas();
-    } catch (error) {
-      alert(
-        "Gagal mengedit mahasiswa: " +
-          (error.response?.data?.message || error.message || "Error")
-      );
+    const result = await updateMahasiswa(userData);
+    if (result.success) {
+      closeEditModal();
     }
   };
 
-  // Handler hapus mahasiswa
   const handleDeleteMahasiswa = async () => {
-    try {
-      await mahasiswaService.deleteMahasiswa(deleteUserId);
-      setShowDeleteModal(false);
-      setDeleteUserId(null);
-      fetchMahasiswas();
-    } catch (error) {
-      alert(
-        "Gagal menghapus mahasiswa: " +
-          (error.response?.data?.message || error.message || "Error")
-      );
+    const result = await deleteMahasiswa(deleteUserId);
+    if (result.success) {
+      closeDeleteModal();
     }
-  };
-
-  // Handler upload excel
-  const handleExcelUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    try {
-      await mahasiswaService.importFromExcel(file);
-      alert("Import Excel berhasil!");
-      fetchMahasiswas();
-    } catch (error) {
-      // Handle specific error messages
-      let errorMessage = "Gagal import Excel: ";
-
-      if (error.response?.data?.message) {
-        errorMessage += error.response.data.message;
-
-        // Tambahkan informasi kolom yang hilang jika ada
-        if (error.response.data.missingColumns) {
-          const missing = [];
-          const missingCols = error.response.data.missingColumns;
-
-          if (missingCols.NIM) missing.push("NIM");
-          if (missingCols.Nama) missing.push("Nama");
-          if (missingCols.Password) missing.push("Password");
-
-          if (missing.length > 0) {
-            errorMessage +=
-              "\nKolom yang tidak ditemukan: " + missing.join(", ");
-          }
-        }
-      } else if (error.message) {
-        errorMessage += error.message;
-      } else {
-        errorMessage += "Terjadi kesalahan saat mengimpor data";
-      }
-
-      alert(errorMessage);
-    }
-
-    // Reset input file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  // Setup ref untuk file upload dengan handler
-  if (fileInputRef.current) {
-    fileInputRef.current.onFileChange = handleExcelUpload;
-  }
-
-  // Handlers untuk tabel
-  const handleEditClick = (mahasiswa) => {
-    setSelectedMahasiswa(mahasiswa);
-    setShowEditModal(true);
-  };
-
-  const handleDeleteClick = (id) => {
-    setDeleteUserId(id);
-    setShowDeleteModal(true);
   };
 
   return (
     <AdminDashboardLayout>
       <div className="space-y-4">
-        {/* Header dan Tombol Aksi dalam satu container */}
+        {/* Header dan Tombol Aksi */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          {/* Tombol Aksi */}
           <div className="order-2 md:order-1">
             <MahasiswaActionButtons
-              onAddClick={() => setShowModal(true)}
+              onAddClick={openAddModal}
               fileInputRef={fileInputRef}
             />
           </div>
 
-          {/* Search input */}
           <div className="order-1 md:order-2">
             <MahasiswaSearchBar
               searchTerm={searchTerm}
@@ -194,19 +102,19 @@ const ManajemenMahasiswa = () => {
             mahasiswas={mahasiswas}
             isLoading={isLoading}
             searchTerm={searchTerm}
-            onEdit={handleEditClick}
-            onDelete={handleDeleteClick}
+            onEdit={openEditModal}
+            onDelete={openDeleteModal}
           />
         </div>
 
         {/* Modal Tambah Mahasiswa */}
         <ModalComponent
-          isOpen={showModal}
+          isOpen={showAddModal}
           title="Tambah Mahasiswa"
-          onClose={() => setShowModal(false)}
+          onClose={closeAddModal}
         >
           <AddMahasiswaForm
-            onClose={() => setShowModal(false)}
+            onClose={closeAddModal}
             onSubmit={handleAddMahasiswa}
           />
         </ModalComponent>
@@ -216,17 +124,11 @@ const ManajemenMahasiswa = () => {
           <ModalComponent
             isOpen={showEditModal}
             title="Edit Mahasiswa"
-            onClose={() => {
-              setShowEditModal(false);
-              setSelectedMahasiswa(null);
-            }}
+            onClose={closeEditModal}
           >
             <EditMahasiswaForm
               mahasiswa={selectedMahasiswa}
-              onClose={() => {
-                setShowEditModal(false);
-                setSelectedMahasiswa(null);
-              }}
+              onClose={closeEditModal}
               onSubmit={handleEditMahasiswa}
             />
           </ModalComponent>
@@ -236,16 +138,10 @@ const ManajemenMahasiswa = () => {
         <ModalComponent
           isOpen={showDeleteModal}
           title="Konfirmasi Hapus"
-          onClose={() => {
-            setShowDeleteModal(false);
-            setDeleteUserId(null);
-          }}
+          onClose={closeDeleteModal}
         >
           <DeleteConfirmation
-            onClose={() => {
-              setShowDeleteModal(false);
-              setDeleteUserId(null);
-            }}
+            onClose={closeDeleteModal}
             onDelete={handleDeleteMahasiswa}
           />
         </ModalComponent>

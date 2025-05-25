@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // For handleLogout
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // For handleLogout
 
 // Import Hooks
-import { useUserData } from '../../hooks/useUserData';
-import { useVotingTimer } from '../../hooks/useVotingTimer';
-import { useMahasiswaCandidates } from '../../hooks/useMahasiswaCandidates';
-import { useVoteSubmission } from '../../hooks/useVoteSubmission';
+import { useUserData } from "../../hooks/useUserData";
+import { useVotingTimer } from "../../hooks/useVotingTimer";
+import { useMahasiswaCandidates } from "../../hooks/useMahasiswaCandidates";
+import { useVoteSubmission } from "../../hooks/useVoteSubmission";
 
 // Import Components
-import Header from '../../components/user/Header';
-import StatusBanners from '../../components/user/StatusBanners';
-import PageTitle from '../../components/user/PageTitle';
-import LoadingSpinner from '../../components/user/LoadingSpinner';
-import ErrorMessage from '../../components/user/ErrorMessage';
-import CandidateCard from '../../components/user/CandidateCard';
-import VotingInstructions from '../../components/user/VotingInstructions';
-import PageFooter from '../../components/user/PageFooter';
-import ConfirmationModal from '../../components/user/ConfirmationModal';
-import SuccessModal from '../../components/user/SuccessModal';
+import Header from "../../components/user/Header";
+import StatusBanners from "../../components/user/StatusBanners";
+import PageTitle from "../../components/user/PageTitle";
+import LoadingSpinner from "../../components/user/LoadingSpinner";
+import ErrorMessage from "../../components/user/ErrorMessage";
+import CandidateCard from "../../components/user/CandidateCard";
+import VotingInstructions from "../../components/user/VotingInstructions";
+import PageFooter from "../../components/user/PageFooter";
+import ConfirmationModal from "../../components/user/ConfirmationModal";
+import SuccessModal from "../../components/user/SuccessModal";
 
 const MahasiswaVoting = () => {
   const navigate = useNavigate();
@@ -26,29 +26,37 @@ const MahasiswaVoting = () => {
   // Basic State
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [pageError, setPageError] = useState('');
+  const [pageError, setPageError] = useState("");
   const [hasVoted, setHasVoted] = useState(false); // Will be updated by useUserData
 
   // Custom Hooks
-  const { userData, hasVoted: initialHasVoted, userLoading, userError, setUserError } = useUserData();
-  const { candidates, candidatesLoading, candidatesError, setCandidatesError } = useMahasiswaCandidates();
+  const {
+    userData,
+    hasVoted: initialHasVoted,
+    userLoading,
+    userError,
+    setUserError,
+  } = useUserData();
+  const { candidates, candidatesLoading, candidatesError, setCandidatesError } =
+    useMahasiswaCandidates();
 
   useEffect(() => {
     setHasVoted(initialHasVoted);
   }, [initialHasVoted]);
 
-  const { formattedTime, timeExpired, timerError, setTimerError } = useVotingTimer(
-    900, // 15 minutes * 60 seconds
-    hasVoted 
-  );
+  const { formattedTime, timeExpired, timerError, setTimerError } =
+    useVotingTimer(
+      900, // 15 minutes * 60 seconds
+      hasVoted
+    );
 
-  const { 
-    submitVote, 
-    isSubmitting, 
-    submissionError, 
+  const {
+    submitVote,
+    isSubmitting,
+    submissionError,
     showSuccessModal: voteSubmissionSuccessModal, // Renamed to avoid conflict with component prop
-    setSubmissionError, 
-    setShowSuccessModal: setShowVoteSubmissionSuccessModal // Renamed for clarity
+    setSubmissionError,
+    setShowSuccessModal: setShowVoteSubmissionSuccessModal, // Renamed for clarity
   } = useVoteSubmission(() => {
     setHasVoted(true);
     setShowConfirmationModal(false);
@@ -60,16 +68,35 @@ const MahasiswaVoting = () => {
     else if (candidatesError) setPageError(candidatesError);
     else if (timerError && !hasVoted && !timeExpired) setPageError(timerError);
     else if (submissionError) setPageError(submissionError);
-    else setPageError('');
-  }, [userError, candidatesError, timerError, submissionError, hasVoted, timeExpired]);
+    else setPageError("");
+  }, [
+    userError,
+    candidatesError,
+    timerError,
+    submissionError,
+    hasVoted,
+    timeExpired,
+  ]);
 
   // Effect to clear specific hook errors if pageError is set by something else or conditions change
   useEffect(() => {
     if (pageError !== userError && userError) setUserError(null);
-    if (pageError !== candidatesError && candidatesError) setCandidatesError(null);
+    if (pageError !== candidatesError && candidatesError)
+      setCandidatesError(null);
     if (pageError !== timerError && timerError) setTimerError(null);
-    if (pageError !== submissionError && submissionError) setSubmissionError(null);
-  }, [pageError, userError, candidatesError, timerError, submissionError, setUserError, setCandidatesError, setTimerError, setSubmissionError]);
+    if (pageError !== submissionError && submissionError)
+      setSubmissionError(null);
+  }, [
+    pageError,
+    userError,
+    candidatesError,
+    timerError,
+    submissionError,
+    setUserError,
+    setCandidatesError,
+    setTimerError,
+    setSubmissionError,
+  ]);
 
   // Helper Functions and Handlers (to be reviewed/modified later)
   const baseImageUrl = "http://localhost:5000/uploads/";
@@ -90,11 +117,15 @@ const MahasiswaVoting = () => {
 
   const handleSelectCandidate = (candidate) => {
     if (hasVoted) {
-      setPageError("Anda sudah memberikan suara sebelumnya. Tidak dapat memilih kandidat lagi.");
+      setPageError(
+        "Anda sudah memberikan suara sebelumnya. Tidak dapat memilih kandidat lagi."
+      );
       return;
     }
     if (timeExpired) {
-      setPageError("Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi.");
+      setPageError(
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
+      );
       return;
     }
     setSelectedCandidate(candidate);
@@ -103,7 +134,9 @@ const MahasiswaVoting = () => {
 
   const handleConfirmVote = async () => {
     if (timeExpired) {
-      setPageError("Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi.");
+      setPageError(
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
+      );
       setShowConfirmationModal(false);
       return;
     }
@@ -147,19 +180,21 @@ const MahasiswaVoting = () => {
           timeExpired={timeExpired}
         />
 
-        <LoadingSpinner loading={userLoading || candidatesLoading || isSubmitting} />
-        
+        <LoadingSpinner
+          loading={userLoading || candidatesLoading || isSubmitting}
+        />
+
         {/* Display pageError:
             - Show if pageError exists.
             - AND if user has NOT voted (because useUserData might set an error for already voted, which is handled by StatusBanners).
             - AND if time has NOT expired (because useVotingTimer might set an error for time expired, also handled by StatusBanners).
             - OR if the error is specifically a submission error (which should always be shown if present).
         */}
-        {pageError && 
-         !((hasVoted || timeExpired) && (userError || timerError)) || submissionError
-         ? <ErrorMessage message={pageError} /> : null
-        }
-
+        {(pageError &&
+          !((hasVoted || timeExpired) && (userError || timerError))) ||
+        submissionError ? (
+          <ErrorMessage message={pageError} />
+        ) : null}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {candidates.map((candidate, index) => (
