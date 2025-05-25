@@ -21,7 +21,7 @@ const MahasiswaVoting = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(30); // Waktu voting
+  const [timeLeft, setTimeLeft] = useState(300);
   const [hasVoted, setHasVoted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -179,7 +179,7 @@ const MahasiswaVoting = () => {
       setHasVoted(true);
       setShowConfirmation(false);
 
-      // Tampilkan modal sukses
+      //  modal sukses
       setShowSuccessModal(true);
 
       // Tutup modal sukses setelah 3 detik

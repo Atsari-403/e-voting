@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const useCandidates = () => {
   const navigate = useNavigate();
@@ -42,22 +43,67 @@ const useCandidates = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  // Handler untuk menghapus kandidat
-  const handleDeleteCandidate = async (id) => {
+  // Handler untuk menghapus kandidat dengan SweetAlert
+  const handleDeleteCandidate = async (id, candidateName = "kandidat") => {
     try {
-      await axios.delete(`http://localhost:5000/api/candidates/${id}`, {
-        withCredentials: true,
+      // Tampilkan konfirmasi SweetAlert
+      const result = await Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: `Data ${candidateName} akan dihapus secara permanen!`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, Hapus!",
+        cancelButtonText: "Batal",
+        reverseButtons: true,
       });
 
-      refreshCandidates();
-      alert("Kandidat berhasil dihapus");
+      // Jika user konfirmasi hapus
+      if (result.isConfirmed) {
+        // Loading saat proses hapus
+        Swal.fire({
+          title: "Menghapus...",
+          text: "Sedang menghapus data kandidat",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        // Kirim request hapus ke API
+        await axios.delete(`http://localhost:5000/api/candidates/${id}`, {
+          withCredentials: true,
+        });
+
+        // Refresh data setelah berhasil hapus
+        refreshCandidates();
+
+        // Tampilkan pesan sukses
+        Swal.fire({
+          title: "Berhasil!",
+          text: `${candidateName} telah dihapus.`,
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
     } catch (error) {
       console.error("Error saat menghapus kandidat:", error);
+
       if (error.response?.status === 401) {
         navigate("/login");
         return;
       }
-      alert("Gagal menghapus kandidat. Silakan coba lagi.");
+
+      // Tampilkan pesan error dengan SweetAlert
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal menghapus kandidat. Silakan coba lagi.",
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+      });
     }
   };
 
