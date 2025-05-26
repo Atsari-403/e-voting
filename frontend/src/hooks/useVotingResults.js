@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-/**
- * Custom hook untuk mengambil dan mengelola data hasil voting
- */
 const useVotingResults = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

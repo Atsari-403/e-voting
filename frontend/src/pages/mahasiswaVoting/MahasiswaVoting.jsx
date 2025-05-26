@@ -21,7 +21,7 @@ const MahasiswaVoting = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [hasVoted, setHasVoted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -228,52 +228,59 @@ const MahasiswaVoting = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50 flex flex-col">
       {/* Header - Navbar dengan Design Modern dan Responsif */}
       <header className="bg-white text-gray-800 shadow-md border-b border-gray-200 sticky top-0 z-30">
-        <div className="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img src={logo} alt="E-Voting Logo" className="h-8 sm:h-10" />
-            <div className="flex flex-col">
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
-                E-Voting Mahasiswa
-              </h1>
-              {userData && (
-                <span className="text-xs text-gray-500">
-                  Hai, {userData.name || userData.nim}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0">
-            <div
-              className={`${
-                timeExpired
-                  ? "bg-red-600"
-                  : hasVoted
-                  ? "bg-green-600"
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600"
-              } py-1 sm:py-2 px-3 sm:px-4 rounded-lg text-white shadow-md flex items-center`}
-            >
-              <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-              <span className="font-mono text-xs sm:text-sm font-medium">
-                {timeExpired
-                  ? "00:00"
-                  : hasVoted
-                  ? "Voted"
-                  : formatTime(timeLeft)}
-              </span>
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
+            {/* Logo dan Info User */}
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+              <img
+                src={logo}
+                alt="E-Voting Logo"
+                className="h-6 sm:h-8 flex-shrink-0"
+              />
+              <div className="flex flex-col min-w-0">
+                <h1 className="text-xs sm:text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent truncate">
+                  E-Voting Mahasiswa
+                </h1>
+                {userData && (
+                  <span className="text-xs text-gray-500 truncate">
+                    Hai, {userData.name || userData.nim}
+                  </span>
+                )}
+              </div>
             </div>
 
-            {/* tombol logout */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-1 sm:space-x-2 bg-red-500 hover:bg-red-600 text-white py-1 sm:py-2 px-2 sm:px-4 rounded-lg shadow-md transition-colors text-xs sm:text-sm"
-            >
-              <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="font-medium hidden sm:inline">Logout</span>
-            </button>
+            {/* Timer dan Logout dalam satu baris */}
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+              <div
+                className={`${
+                  timeExpired
+                    ? "bg-red-600"
+                    : hasVoted
+                    ? "bg-green-600"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600"
+                } py-1 sm:py-2 px-2 sm:px-3 rounded-lg text-white shadow-md flex items-center`}
+              >
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="font-mono text-xs sm:text-sm font-medium">
+                  {timeExpired
+                    ? "00:00"
+                    : hasVoted
+                    ? "Done"
+                    : formatTime(timeLeft)}
+                </span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white py-1 sm:py-2 px-2 sm:px-3 rounded-lg shadow-md transition-colors text-xs sm:text-sm"
+              >
+                <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="font-medium hidden sm:inline">Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
-
       {/* Main Content with Improved Responsive Visual Design */}
       <main className="container mx-auto px-4 py-4 sm:py-8 flex-grow">
         {/* Status Banners */}
@@ -346,7 +353,10 @@ const MahasiswaVoting = () => {
         </div>
 
         {loading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
             <div className="bg-white p-6 sm:p-8 rounded-xl flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
               <p className="text-gray-700 font-medium text-sm sm:text-base">
@@ -590,7 +600,7 @@ const MahasiswaVoting = () => {
         </div>
       </main>
 
-      {/* Footer - Added for better UX */}
+      {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-3 mt-6">
         <div className="container mx-auto px-4 text-center text-xs sm:text-sm text-gray-500">
           &copy; {new Date().getFullYear()} E-Voting Mahasiswa • Sistem
