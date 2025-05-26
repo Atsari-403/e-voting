@@ -1,8 +1,6 @@
 import React from "react";
 import AdminDashboardLayout from "../../components/AdminDashboardLayout";
 import useVotingResults from "../../hooks/useVotingResults";
-
-// Import komponen yang sudah dipecah
 import LoadingState from "../../components/admin/hasilVoting/LoadingState";
 import EmptyState from "../../components/admin/hasilVoting/EmptyState";
 import Header from "../../components/admin/hasilVoting/Header";
@@ -12,10 +10,10 @@ import PieChartSection from "../../components/admin/hasilVoting/PieChartSection"
 import CandidateList from "../../components/admin/hasilVoting/CandidateList";
 
 const HasilVotingPage = () => {
-  // Menggunakan custom hook untuk mengambil data
+  // custom hook 
   const { loading, error, voteData } = useVotingResults();
 
-  // Menampilkan loading state
+  // loading state
   if (loading) {
     return (
       <AdminDashboardLayout>

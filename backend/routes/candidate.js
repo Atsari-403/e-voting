@@ -6,7 +6,7 @@ const fs = require("fs");
 const candidateController = require("../controllers/candidateController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Pastikan direktori upload ada
+// direktori upload
 const uploadDir = path.join(__dirname, "../public/uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filter file untuk memastikan hanya gambar yang diupload
+// Filter file untuk gambar yang diupload
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -60,7 +60,7 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
-// Middleware untuk upload yang lebih sederhana, dipilih berdasarkan header design-type
+// Middleware untuk upload file berdasarkan design type
 const handleUpload = (req, res, next) => {
   const designType = req.headers["design-type"];
 

@@ -35,10 +35,10 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // middleware untuk serving static files
 app.use(express.static(path.join(__dirname, "public")));
-// route khusus untuk uploads jika diperlukan
+// route khusus untuk uploads 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// sebelum routes
+
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();

@@ -188,7 +188,7 @@ const useKandidatForm = (onSuccess) => {
       );
 
       if (response.status === 201) {
-        // Panggil callback onSuccess jika ada
+        // callback onSuccess
         if (onSuccess) {
           onSuccess();
         }
@@ -226,7 +226,7 @@ const useKandidatForm = (onSuccess) => {
           typeof error.response.data === "string" &&
           error.response.data.includes("<!DOCTYPE html>")
         ) {
-          // Parse HTML error page
+          // Jika response adalah HTML, ambil pesan error dari dalam tag <pre>
           const errorMatch = error.response.data.match(/<pre>([^<]+)<\/pre>/);
           errorMessage = errorMatch
             ? errorMatch[1].split("<br>")[0]

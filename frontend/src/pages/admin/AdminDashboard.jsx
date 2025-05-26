@@ -32,7 +32,7 @@ const DashboardCard = ({ title, value, icon, color, bgColor, textColor }) => {
   );
 };
 
-// Top Candidates Component yang dipercantik
+// Top Candidates Component dipercantik
 // const TopCandidates = ({ candidates }) => {
 //   return (
 //     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
