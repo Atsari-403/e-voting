@@ -51,7 +51,7 @@ export default function Login() {
     <div>
       <Iridescence
         color={[0.8, 0.8, 0.8]}
-        speed={0.9}
+        speed={1.5}
         amplitude={0.05}
         mouseReact={true}
         className="fixed top-0 left-0 w-full h-full z-[-1]"
