@@ -36,7 +36,7 @@ const HasilVotingPage = () => {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-6">
           {/* Header dengan info update terakhir */}
-          <Header lastUpdated={voteData.lastUpdated} />
+          {/* <Header lastUpdated={voteData.lastUpdated} /> */}
 
           {/* Error Message */}
           <ErrorMessage message={error} />
@@ -45,11 +45,11 @@ const HasilVotingPage = () => {
           <VoteStats voteData={voteData} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Pie Chart */}
-            <PieChartSection candidates={voteData.candidates} />
-
             {/* Candidate List */}
             <CandidateList candidates={voteData.candidates} />
+
+            {/* Pie Chart */}
+            <PieChartSection candidates={voteData.candidates} />
           </div>
         </div>
       </div>

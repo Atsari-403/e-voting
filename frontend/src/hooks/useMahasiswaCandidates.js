@@ -24,7 +24,7 @@ const useMahasiswaCandidates = () => {
     };
 
     fetchCandidates();
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []);
 
   return { candidates, candidatesLoading, candidatesError, setCandidatesError };
 };

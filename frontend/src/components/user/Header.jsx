@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../../assets/Logo.png'; // Adjusted path
+import logo from '../../assets/Logo.png'; // Adjust the path as necessary
 import { Clock, LogOut } from 'lucide-react';
 
 const Header = ({ userData, formattedTime, timeExpired, hasVoted, onLogout }) => {

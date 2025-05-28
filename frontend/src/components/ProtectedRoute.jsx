@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
 const ProtectedRoute = ({ children, roleAllowed }) => {
+  const { updateUser } = useUser();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +24,7 @@ const ProtectedRoute = ({ children, roleAllowed }) => {
         }
 
         const user = await response.json();
+        updateUser(user); // Update UserContext
         if (!user) {
           setIsAuthenticated(false);
         } else {
@@ -39,7 +42,7 @@ const ProtectedRoute = ({ children, roleAllowed }) => {
     checkAuth();
   }, []);
 
-  // Show loading spinner while checking authentication
+  // loading spinner
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">

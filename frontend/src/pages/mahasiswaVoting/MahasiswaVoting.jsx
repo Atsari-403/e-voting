@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For handleLogout
 
 // Import Hooks
-import { useUserData } from "../../hooks/useUserData";
-import { useVotingTimer } from "../../hooks/useVotingTimer";
-import { useMahasiswaCandidates } from "../../hooks/useMahasiswaCandidates";
-import { useVoteSubmission } from "../../hooks/useVoteSubmission";
+import useUserData  from "../../hooks/useUserData";
+import useVotingTimer from "../../hooks/useVotingTimer";
+import useMahasiswaCandidates from "../../hooks/useMahasiswaCandidates";
+import useVoteSubmission  from "../../hooks/useVoteSubmission";
 
 // Import Components
 import Header from "../../components/user/Header";
@@ -46,7 +46,7 @@ const MahasiswaVoting = () => {
 
   const { formattedTime, timeExpired, timerError, setTimerError } =
     useVotingTimer(
-      900, // 15 minutes * 60 seconds
+      5,
       hasVoted
     );
 
@@ -54,9 +54,9 @@ const MahasiswaVoting = () => {
     submitVote,
     isSubmitting,
     submissionError,
-    showSuccessModal: voteSubmissionSuccessModal, // Renamed to avoid conflict with component prop
+    showSuccessModal: voteSubmissionSuccessModal,
     setSubmissionError,
-    setShowSuccessModal: setShowVoteSubmissionSuccessModal, // Renamed for clarity
+    setShowSuccessModal: setShowVoteSubmissionSuccessModal, 
   } = useVoteSubmission(() => {
     setHasVoted(true);
     setShowConfirmationModal(false);

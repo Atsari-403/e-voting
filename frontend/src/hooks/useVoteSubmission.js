@@ -48,8 +48,8 @@ const useVoteSubmission = (onVoteSuccess) => {
     isSubmitting,
     submissionError,
     showSuccessModal,
-    setSubmissionError, // Added setSubmissionError to the return object
-    setShowSuccessModal, // Added setShowSuccessModal to the return object
+    setSubmissionError, 
+    setShowSuccessModal,
   };
 };
 

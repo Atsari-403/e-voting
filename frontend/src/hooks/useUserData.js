@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
 const useUserData = () => {
+  const { updateUser } = useUser();
   const [userData, setUserData] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [userLoading, setUserLoading] = useState(true);
@@ -12,20 +14,21 @@ const useUserData = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/auth/me', {
+        const response = await axios.get("http://localhost:5000/api/auth/me", {
           withCredentials: true,
         });
         setUserData(response.data);
+        updateUser(response.data);
         setHasVoted(response.data.hasVoted);
         if (response.data.hasVoted) {
           setUserError(
-            'Anda sudah memberikan suara sebelumnya. Tombol voting telah dinonaktifkan.'
+            "Anda sudah memberikan suara sebelumnya. Tombol voting telah dinonaktifkan."
           );
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        setUserError('Gagal memuat data pengguna.');
-        navigate('/');
+        console.error("Error fetching user data:", error);
+        setUserError("Gagal memuat data pengguna.");
+        navigate("/");
       } finally {
         setUserLoading(false);
       }
