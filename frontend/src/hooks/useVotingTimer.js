@@ -39,7 +39,7 @@ const useVotingTimer = (initialTime, hasVoted) => {
     formattedTime: formatTime(timeLeft),
     timeExpired,
     timerError,
-    setTimerError, // Added setTimerError to the return object
+    setTimerError,
   };
 };
 

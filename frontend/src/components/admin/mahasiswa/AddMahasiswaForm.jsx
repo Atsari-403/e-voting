@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Loader2 } from "lucide-react";
 
-const AddMahasiswaForm = ({ onClose, onSubmit }) => {
+const AddMahasiswaForm = ({ onClose, onSubmit, isSaving }) => {
   const [formData, setFormData] = useState({ nim: "", name: "", password: "" });
 
   const handleChange = (e) => {
@@ -65,9 +66,17 @@ const AddMahasiswaForm = ({ onClose, onSubmit }) => {
         </button>
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          disabled={isSaving}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-75 disabled:cursor-not-allowed"
         >
-          Simpan
+          {isSaving ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-5 w-5 inline" />
+              Menyimpan...
+            </>
+          ) : (
+            "Simpan"
+          )}
         </button>
       </div>
     </div>

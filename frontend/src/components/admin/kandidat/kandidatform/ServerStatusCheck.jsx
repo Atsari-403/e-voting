@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
 
 // Fungsi untuk memeriksa koneksi server
 const checkServerConnection = async () => {
@@ -30,7 +30,8 @@ const ServerStatusCheck = ({ onStatusChange }) => {
   if (serverStatus === "checking") {
     return (
       <div className="flex justify-center items-center h-40 sm:h-64">
-        <div className="text-gray-600 animate-pulse">
+        <div className="flex items-center justify-center text-gray-600">
+          <Loader2 className="animate-spin h-5 w-5 mr-2 text-blue-500" />
           Memeriksa koneksi server...
         </div>
       </div>

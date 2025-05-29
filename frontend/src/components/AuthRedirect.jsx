@@ -10,8 +10,6 @@ const AuthRedirect = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Tambahkan parameter timestamp untuk mencegah caching
-        
         const response = await fetch(
           `http://localhost:5000/api/auth/me?t=${new Date().getTime()}`,
           {
@@ -66,7 +64,6 @@ const AuthRedirect = ({ children }) => {
     checkAuth();
   }, []);
 
-  // Show loading spinner while checking authentication
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -86,7 +83,6 @@ const AuthRedirect = ({ children }) => {
       return <Navigate to="/mahasiswa/voting" replace />;
     }
   }
-
   // If not authenticated, show the login page
   return children;
 };

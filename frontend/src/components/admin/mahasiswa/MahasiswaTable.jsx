@@ -7,6 +7,7 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
 
 const MahasiswaTable = ({
@@ -93,7 +94,7 @@ const MahasiswaTable = ({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <Loader2 className="animate-spin h-8 w-8 text-blue-500" />
       </div>
     );
   }

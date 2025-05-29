@@ -3,7 +3,7 @@ import AdminDashboardLayout from "../../components/AdminDashboardLayout";
 import useVotingResults from "../../hooks/useVotingResults";
 import LoadingState from "../../components/admin/hasilVoting/LoadingState";
 import EmptyState from "../../components/admin/hasilVoting/EmptyState";
-import Header from "../../components/admin/hasilVoting/Header";
+// import Header from "../../components/admin/hasilVoting/Header";
 import ErrorMessage from "../../components/admin/hasilVoting/ErrorMessage";
 import VoteStats from "../../components/admin/hasilVoting/VoteStats";
 import PieChartSection from "../../components/admin/hasilVoting/PieChartSection";
@@ -22,7 +22,7 @@ const HasilVotingPage = () => {
     );
   }
 
-  // Menampilkan pesan jika tidak ada kandidat
+  // empty state
   if (voteData.candidates.length === 0) {
     return (
       <AdminDashboardLayout>
@@ -44,12 +44,16 @@ const HasilVotingPage = () => {
           {/* Stats Cards */}
           <VoteStats voteData={voteData} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Candidate List */}
-            <CandidateList candidates={voteData.candidates} />
+            <div className="md:col-span-2">
+              <CandidateList candidates={voteData.candidates} />
+            </div>
 
             {/* Pie Chart */}
-            <PieChartSection candidates={voteData.candidates} />
+            <div>
+              <PieChartSection candidates={voteData.candidates} />
+            </div>
           </div>
         </div>
       </div>

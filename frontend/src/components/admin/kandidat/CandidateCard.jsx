@@ -1,92 +1,171 @@
 import React from "react";
-import { Trash2, User, Award } from "lucide-react";
+import { Trash2, User, Award, Target, Eye } from "lucide-react";
 
 const CandidateCard = ({ candidate, onDelete }) => {
   const handleDelete = () => {
-    // onDelete tanpa konfirmasi window.confirm
-    // Konfirmasi akan ditangani oleh SweetAlert di useCandidates hook
     onDelete(candidate.id, `${candidate.nameKetua} & ${candidate.nameWakil}`);
   };
 
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-        {/* Foto Profil Kandidat */}
-        <div className="flex flex-row justify-center md:flex-col gap-4 items-center">
-          <div className="relative">
-            {candidate.fotoKetua ? (
-              <img
-                src={`http://localhost:5000${candidate.fotoKetua}`}
-                alt="Foto Ketua"
-                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-full ring-4 ring-blue-100"
-              />
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
-              </div>
-            )}
-            <span className="absolute -bottom-1 right-0 bg-green-600 text-white text-xs px-2 py-1 rounded-full">
-              Ketua
-            </span>
-          </div>
+    <div
+      className="group relative bg-gradient-to-br from-white via-white to-blue-50/30 
+                    rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 
+                    border border-gray-100 hover:border-blue-200/50 overflow-hidden
+                    transform hover:-translate-y-1"
+    >
+      {/* Decorative gradient overlay */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-full blur-xl" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-500/10 to-transparent rounded-full blur-xl" />
 
-          <div className="relative">
-            {candidate.fotoWakil ? (
-              <img
-                src={`http://localhost:5000${candidate.fotoWakil}`}
-                alt="Foto Wakil"
-                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-full ring-4 ring-blue-100"
-              />
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
-              </div>
-            )}
-            <span className="absolute -bottom-1 right-0 bg-green-400 text-white text-xs px-2 py-1 rounded-full">
-              Wakil
-            </span>
-          </div>
-        </div>
-
-        {/* Informasi Kandidat */}
-        <div className="flex-1 mt-4 md:mt-0">
-          <div className="flex flex-col lg:flex-row justify-between items-start">
-            <div className="w-full lg:w-auto">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-800">
-                {candidate.nameKetua} & {candidate.nameWakil}
-              </h3>
-              <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
-                <div>
-                  <h4 className="flex items-center text-gray-700 font-semibold">
-                    <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
-                    Visi
-                  </h4>
-                  <p className="mt-1 text-sm sm:text-base text-gray-600 pl-6 sm:pl-7">
-                    {candidate.visi}
-                  </p>
+      <div className="relative p-6 lg:p-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Profile Photos Section */}
+          <div className="flex flex-row lg:flex-col justify-center gap-6 items-center lg:items-start">
+            {/* Ketua Photo */}
+            <div className="relative group/photo">
+              <div className="relative">
+                {candidate.fotoKetua ? (
+                  <img
+                    src={`http://localhost:5000${candidate.fotoKetua}`}
+                    alt="Foto Ketua"
+                    className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 object-cover 
+                             rounded-2xl ring-4 ring-gradient-to-r from-blue-400 to-indigo-500 
+                             ring-offset-2 shadow-lg group-hover/photo:shadow-xl
+                             transition-all duration-300 group-hover/photo:scale-105"
+                  />
+                ) : (
+                  <div
+                    className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 
+                                bg-gradient-to-br from-gray-100 to-gray-200 
+                                rounded-2xl flex items-center justify-center
+                                ring-4 ring-gray-300 ring-offset-2 shadow-lg"
+                  >
+                    <User className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
+                  </div>
+                )}
+                <div
+                  className="absolute -bottom-2 -right-2 bg-gradient-to-r from-emerald-500 to-green-600 
+                              text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg
+                              border-2 border-white"
+                >
+                  Ketua
                 </div>
+              </div>
+            </div>
 
-                <div>
-                  <h4 className="flex items-center text-gray-700 font-semibold">
-                    <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
-                    Misi
-                  </h4>
-                  <p className="mt-1 text-sm sm:text-base text-gray-600 pl-6 sm:pl-7">
-                    {candidate.misi}
-                  </p>
+            {/* Wakil Photo */}
+            <div className="relative group/photo">
+              <div className="relative">
+                {candidate.fotoWakil ? (
+                  <img
+                    src={`http://localhost:5000${candidate.fotoWakil}`}
+                    alt="Foto Wakil"
+                    className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 object-cover 
+                             rounded-2xl ring-4 ring-gradient-to-r from-blue-400 to-indigo-500 
+                             ring-offset-2 shadow-lg group-hover/photo:shadow-xl
+                             transition-all duration-300 group-hover/photo:scale-105"
+                  />
+                ) : (
+                  <div
+                    className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 
+                                bg-gradient-to-br from-gray-100 to-gray-200 
+                                rounded-2xl flex items-center justify-center
+                                ring-4 ring-gray-300 ring-offset-2 shadow-lg"
+                  >
+                    <User className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
+                  </div>
+                )}
+                <div
+                  className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-indigo-600 
+                              text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg
+                              border-2 border-white"
+                >
+                  Wakil
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 sm:mt-6 flex justify-end">
-            <button
-              onClick={handleDelete}
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex items-center text-sm sm:text-base"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Hapus Kandidat
-            </button>
+          {/* Content Section */}
+          <div className="flex-1 space-y-6">
+            {/* Header */}
+            <div>
+              <h3
+                className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 
+                           bg-clip-text text-transparent leading-tight"
+              >
+                {candidate.nameKetua}
+              </h3>
+              <div className="flex items-center mt-1">
+                <div className="h-0.5 w-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mr-3" />
+                <h4 className="text-lg lg:text-xl font-semibold text-gray-700">
+                  {candidate.nameWakil}
+                </h4>
+              </div>
+            </div>
+
+            {/* Vision & Mission Cards */}
+            <div className="space-y-4">
+              {/* Vision Card */}
+              <div
+                className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 
+                            border border-green-100 hover:border-green-200 transition-colors duration-300"
+              >
+                <div className="flex items-start space-x-3">
+                  <div
+                    className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 
+                                rounded-lg flex items-center justify-center shadow-md"
+                  >
+                    <Eye className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-green-800 mb-2">Visi</h4>
+                    <p className="text-sm lg:text-base text-green-700 leading-relaxed">
+                      {candidate.visi}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mission Card */}
+              <div
+                className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 
+                            border border-blue-100 hover:border-blue-200 transition-colors duration-300"
+              >
+                <div className="flex items-start space-x-3">
+                  <div
+                    className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 
+                                rounded-lg flex items-center justify-center shadow-md"
+                  >
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-blue-800 mb-2">Misi</h4>
+                    <p className="text-sm lg:text-base text-blue-700 leading-relaxed">
+                      {candidate.misi}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* tombol hapus */}
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={handleDelete}
+                className="group/btn inline-flex items-center px-4 py-2.5 
+                         bg-gradient-to-r from-red-50 to-pink-50 
+                         border border-red-200 rounded-xl
+                         text-red-600 font-medium text-sm
+                         hover:from-red-500 hover:to-pink-500 hover:text-white
+                         hover:border-red-500 hover:shadow-lg
+                         transform hover:scale-105 transition-all duration-300
+                         focus:outline-none focus:ring-4 focus:ring-red-200/50"
+              >
+                <Trash2 className="w-4 h-4 mr-2 group-hover/btn:animate-pulse" />
+                Hapus Kandidat
+              </button>
+            </div>
           </div>
         </div>
       </div>

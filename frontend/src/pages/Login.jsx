@@ -2,19 +2,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 // import BgLogin from "../assets/bglogin.jpg";
-import { Eye, EyeOff } from "lucide-react";
-import Iridescence  from "../../ReactBits/Iridescence/Iridescence";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import Iridescence from "../../ReactBits/Iridescence/Iridescence";
 
 export default function Login() {
   const [nim, setNim] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // New state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoggingIn(true); // Set loading to true
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -44,13 +46,15 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
       setError("Terjadi kesalahan pada server");
+    } finally {
+      setIsLoggingIn(false); // Set loading to false
     }
   };
 
   return (
     <div>
       <Iridescence
-        color={[0.8, 0.8, 0.8]}
+        color={[0.7, 0.7, 0.7]}
         speed={1.5}
         amplitude={0.05}
         mouseReact={true}
@@ -137,9 +141,17 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
+                disabled={isLoggingIn} // Disable button when loading
+                className="w-full bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Login
+                {isLoggingIn ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-5 w-5 inline" />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>

@@ -10,6 +10,7 @@ import {
   RefreshCw,
   BarChart3,
   // Info,
+  Loader2,
 } from "lucide-react";
 import axios from "axios";
 
@@ -167,10 +168,7 @@ const AdminDashboard = () => {
       <AdminDashboardLayout>
         <div className="h-full flex items-center justify-center">
           <div className="text-center">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-20 w-20 border-4 border-gray-200 mx-auto"></div>
-              <div className="animate-spin rounded-full h-20 w-20 border-4 border-blue-600 border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
-            </div>
+            <Loader2 className="animate-spin h-20 w-20 text-blue-600 mx-auto" />
             <p className="mt-6 text-gray-600 font-semibold text-lg">
               Memuat dashboard...
             </p>

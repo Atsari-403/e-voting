@@ -27,7 +27,7 @@ const MahasiswaVoting = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [pageError, setPageError] = useState("");
-  const [hasVoted, setHasVoted] = useState(false); // Will be updated by useUserData
+  const [hasVoted, setHasVoted] = useState(false);
 
   // Custom Hooks
   const {
@@ -46,7 +46,7 @@ const MahasiswaVoting = () => {
 
   const { formattedTime, timeExpired, timerError, setTimerError } =
     useVotingTimer(
-      5,
+      360, 
       hasVoted
     );
 
@@ -62,7 +62,7 @@ const MahasiswaVoting = () => {
     setShowConfirmationModal(false);
   });
 
-  // Error Aggregation Logic
+  
   useEffect(() => {
     if (userError) setPageError(userError);
     else if (candidatesError) setPageError(candidatesError);
@@ -78,7 +78,7 @@ const MahasiswaVoting = () => {
     timeExpired,
   ]);
 
-  // Effect to clear specific hook errors if pageError is set by something else or conditions change
+  
   useEffect(() => {
     if (pageError !== userError && userError) setUserError(null);
     if (pageError !== candidatesError && candidatesError)
@@ -184,19 +184,13 @@ const MahasiswaVoting = () => {
           loading={userLoading || candidatesLoading || isSubmitting}
         />
 
-        {/* Display pageError:
-            - Show if pageError exists.
-            - AND if user has NOT voted (because useUserData might set an error for already voted, which is handled by StatusBanners).
-            - AND if time has NOT expired (because useVotingTimer might set an error for time expired, also handled by StatusBanners).
-            - OR if the error is specifically a submission error (which should always be shown if present).
-        */}
         {(pageError &&
           !((hasVoted || timeExpired) && (userError || timerError))) ||
         submissionError ? (
           <ErrorMessage message={pageError} />
         ) : null}
 
-        {/* Candidate Cards with Improved Responsive Visual Design */}
+        {/* Candidate Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {candidates.map((candidate, index) => (
             <CandidateCard
@@ -219,7 +213,7 @@ const MahasiswaVoting = () => {
       <ConfirmationModal
         show={showConfirmationModal}
         candidate={selectedCandidate}
-        candidates={candidates} // Pass the full list of candidates
+        candidates={candidates} 
         onClose={() => setShowConfirmationModal(false)}
         onConfirm={handleConfirmVote}
       />
