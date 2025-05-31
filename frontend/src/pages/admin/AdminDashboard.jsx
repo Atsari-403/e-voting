@@ -158,9 +158,9 @@ const AdminDashboard = () => {
       fetchDashboardData();
     }, 10000);
 
-    // Cleanup interval on component unmount
+    
     return () => clearInterval(interval);
-  }, []); // Empty dependency array since want this to run once on mount
+  }, []); 
 
   // Enhanced loading state
   if (loading) {
