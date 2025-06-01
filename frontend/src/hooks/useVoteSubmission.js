@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import votingService from '../services/votingService';
 
 const useVoteSubmission = (onVoteSuccess) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,11 +18,7 @@ const useVoteSubmission = (onVoteSuccess) => {
     setSubmissionError(null);
 
     try {
-      await axios.post(
-        'http://localhost:5000/api/users/vote-candidate',
-        { candidateId },
-        { withCredentials: true }
-      );
+      await votingService.submitVote(candidateId);
       onVoteSuccess(); // Notify parent component
       setShowSuccessModal(true);
       setTimeout(() => {

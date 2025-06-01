@@ -1,16 +1,11 @@
-import axios from "axios";
-
-// Base URL API
-const API_URL = "http://localhost:5000/api";
+import apiClient from "../api/apiClient";
 
 // Service untuk mengelola data mahasiswa
 const mahasiswaService = {
   // Mengambil semua data mahasiswa
   getAllMahasiswa: async () => {
     try {
-      const response = await axios.get(`${API_URL}/users`, {
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/users");
 
       // Konversi data dengan eksplisit
       return response.data.map((user) => ({
@@ -27,9 +22,7 @@ const mahasiswaService = {
   // Menambah mahasiswa baru
   addMahasiswa: async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/users`, userData, {
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/users", userData);
       return response.data;
     } catch (error) {
       console.error("Gagal tambah mahasiswa:", error);
@@ -46,9 +39,7 @@ const mahasiswaService = {
         delete dataToSend.password;
       }
 
-      const response = await axios.put(`${API_URL}/users/${id}`, dataToSend, {
-        withCredentials: true,
-      });
+      const response = await apiClient.put(`/users/${id}`, dataToSend);
       return response.data;
     } catch (error) {
       console.error("Gagal edit mahasiswa:", error);
@@ -59,9 +50,7 @@ const mahasiswaService = {
   // Hapus mahasiswa
   deleteMahasiswa: async (id) => {
     try {
-      const response = await axios.delete(`${API_URL}/users/${id}`, {
-        withCredentials: true,
-      });
+      const response = await apiClient.delete(`/users/${id}`);
       return response.data;
     } catch (error) {
       console.error("Gagal hapus mahasiswa:", error);
@@ -75,8 +64,7 @@ const mahasiswaService = {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post(`${API_URL}/users/import`, formData, {
-        withCredentials: true,
+      const response = await apiClient.post("/users/import", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

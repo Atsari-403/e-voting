@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import candidateService from "../services/candidateService";
 
 const useCandidates = () => {
   const navigate = useNavigate();
@@ -14,9 +14,7 @@ const useCandidates = () => {
   const fetchCandidates = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/candidates", {
-        withCredentials: true,
-      });
+      const response = await candidateService.getAllCandidates();
 
       setCandidates(response.data);
       setError("");
@@ -72,9 +70,7 @@ const useCandidates = () => {
         });
 
         // Kirim request hapus ke API
-        await axios.delete(`http://localhost:5000/api/candidates/${id}`, {
-          withCredentials: true,
-        });
+        await candidateService.deleteCandidate(id);
 
         // Refresh data setelah berhasil hapus
         refreshCandidates();

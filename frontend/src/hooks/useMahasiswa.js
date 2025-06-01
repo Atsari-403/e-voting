@@ -134,6 +134,7 @@ export const useMahasiswa = () => {
     try {
       await mahasiswaService.importFromExcel(file);
 
+      console.log("Excel import successful, showing success alert.");
       Swal.fire({
         icon: "success",
         title: "Import Berhasil!",

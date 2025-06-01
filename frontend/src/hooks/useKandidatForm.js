@@ -1,15 +1,19 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import candidateService from "../services/candidateService";
 
 // Fungsi untuk memeriksa koneksi server
 const checkServerConnection = async () => {
   try {
-    await axios.get("http://localhost:5000/api/candidates", { timeout: 3000 });
+    // Note: This uses getAllCandidates for a ping. If this is too heavy,
+    // a dedicated lightweight ping endpoint in candidateService would be better.
+    await candidateService.getAllCandidates(); // Assuming this will throw an error if server is down or 401
     return true;
   } catch (error) {
-    console.error("Server tidak dapat dijangkau:", error);
+    // If candidateService.getAllCandidates() throws an error that should not be treated as server down,
+    // this logic might need refinement. For now, any error is treated as connection issue.
+    console.error("Server tidak dapat dijangkau (or other error during ping):", error);
     return false;
   }
 };
@@ -174,20 +178,21 @@ const useKandidatForm = (onSuccess) => {
       }
 
       // Kirim data ke server
-      const response = await axios.post(
-        "http://localhost:5000/api/candidates",
+      const response = await candidateService.createCandidateWithDesignType(
         formDataObj,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "Design-Type": formData.designType,
-          },
-          timeout: 15000,
-        }
+        formData.designType
       );
 
-      if (response.status === 201) {
+      // Assuming service returns the created candidate object which might have a status-like field,
+      // or we rely on the call not throwing an error for success.
+      // The original check was response.status === 201.
+      // If the service normalizes response, we might just check if response exists.
+      // For now, let's assume if it doesn't throw, it's a success.
+      // The actual response from candidateService.createCandidateWithDesignType is response.data from axios.
+      // So, if the API returns a specific success status in its body, we could check that.
+      // Or, rely on HTTP status codes handled by apiClient (throws for non-2xx).
+      // If we reach here, it means the status was 2xx.
+      if (response) { // Simplified check, assuming service call success implies API success (2xx)
         // callback onSuccess
         if (onSuccess) {
           onSuccess();

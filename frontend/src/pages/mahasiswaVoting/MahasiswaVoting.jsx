@@ -20,10 +20,14 @@ import PageFooter from "../../components/user/PageFooter";
 import ConfirmationModal from "../../components/user/ConfirmationModal";
 import SuccessModal from "../../components/user/SuccessModal";
 
+const VOTING_END_TIME_KEY = 'votingEndTime';
+const VOTING_DURATION_SECONDS = 360; // Original hardcoded duration
+
 const MahasiswaVoting = () => {
   const navigate = useNavigate();
 
   // Basic State
+  const [initialTimerSeconds, setInitialTimerSeconds] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [pageError, setPageError] = useState("");
@@ -44,11 +48,49 @@ const MahasiswaVoting = () => {
     setHasVoted(initialHasVoted);
   }, [initialHasVoted]);
 
+  useEffect(() => {
+    if (userLoading) { // Wait for user data, especially initialHasVoted
+      return;
+    }
+
+    if (hasVoted) { // If user has already voted, no timer needed
+      setInitialTimerSeconds(0);
+      localStorage.removeItem(VOTING_END_TIME_KEY); // Clean up if it exists
+      return;
+    }
+
+    const storedEndTimeString = localStorage.getItem(VOTING_END_TIME_KEY);
+    let calculatedSeconds;
+
+    if (storedEndTimeString) {
+      const endTime = parseInt(storedEndTimeString, 10);
+      const currentTime = Date.now();
+      calculatedSeconds = Math.max(0, Math.floor((endTime - currentTime) / 1000));
+    } else {
+      // Only set a new timer if one doesn't exist and user hasn't voted
+      const newEndTime = Date.now() + VOTING_DURATION_SECONDS * 1000;
+      localStorage.setItem(VOTING_END_TIME_KEY, newEndTime.toString());
+      calculatedSeconds = VOTING_DURATION_SECONDS;
+    }
+
+    setInitialTimerSeconds(calculatedSeconds);
+
+  }, [hasVoted, userLoading]);
+
   const { formattedTime, timeExpired, timerError, setTimerError } =
     useVotingTimer(
-      360, 
+      initialTimerSeconds === null ? 0 : initialTimerSeconds,
       hasVoted
     );
+
+  // Add this effect to handle the case where timer expires due to stored end time
+  useEffect(() => {
+    if (initialTimerSeconds === 0 && localStorage.getItem(VOTING_END_TIME_KEY)) {
+      // This means the timer was loaded with 0 seconds because stored end time was in the past
+      // The useVotingTimer hook will set timeExpired true if initialTime is 0.
+      // No explicit action needed here beyond what useVotingTimer already does.
+    }
+  }, [initialTimerSeconds]);
 
   const {
     submitVote,
@@ -60,6 +102,7 @@ const MahasiswaVoting = () => {
   } = useVoteSubmission(() => {
     setHasVoted(true);
     setShowConfirmationModal(false);
+    localStorage.removeItem(VOTING_END_TIME_KEY); // Clear timer on successful vote
   });
 
   
@@ -153,6 +196,7 @@ const MahasiswaVoting = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
+        localStorage.removeItem(VOTING_END_TIME_KEY);
         navigate("/");
       }
     } catch (error) {

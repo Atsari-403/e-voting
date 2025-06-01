@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import candidateService from '../services/candidateService';
 
 const useMahasiswaCandidates = () => {
   const [candidates, setCandidates] = useState([]);
@@ -10,9 +10,7 @@ const useMahasiswaCandidates = () => {
     const fetchCandidates = async () => {
       setCandidatesLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/candidates', {
-          withCredentials: true,
-        });
+        const response = await candidateService.getAllCandidates();
         setCandidates(response.data);
         setCandidatesError(null);
       } catch (error) {

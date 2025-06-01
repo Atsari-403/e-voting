@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import votingService from "../services/votingService";
 
 const useVotingResults = () => {
   const [loading, setLoading] = useState(true);
@@ -16,17 +16,9 @@ const useVotingResults = () => {
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        "http://localhost:5000/api/users/vote-results",
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const responseData = await votingService.getVoteResults();
 
-      setVoteData(response.data);
+      setVoteData(responseData);
       setError(null);
     } catch (error) {
       console.error("Error detail:", {

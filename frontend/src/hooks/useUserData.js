@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
+import authService from "../services/authService";
 
 const useUserData = () => {
   const { updateUser } = useUser();
@@ -14,20 +14,22 @@ const useUserData = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/auth/me", {
-          withCredentials: true,
-        });
-        setUserData(response.data);
-        updateUser(response.data);
-        setHasVoted(response.data.hasVoted);
-        if (response.data.hasVoted) {
+        const responseData = await authService.getMe();
+        setUserData(responseData);
+        updateUser(responseData);
+        setHasVoted(responseData.hasVoted);
+        if (responseData.hasVoted) {
           setUserError(
             "Anda sudah memberikan suara sebelumnya. Tombol voting telah dinonaktifkan."
           );
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        setUserError("Gagal memuat data pengguna.");
+        // The service logs the error too. Here we set UI error and navigate.
+        // Check if it's a 401 to avoid navigating for other errors if not desired
+        // However, getMe is critical, so any failure might warrant logout/redirect.
+        // The existing code navigates on any error.
+        setUserError("Gagal memuat data pengguna. Sesi mungkin telah berakhir.");
         navigate("/");
       } finally {
         setUserLoading(false);

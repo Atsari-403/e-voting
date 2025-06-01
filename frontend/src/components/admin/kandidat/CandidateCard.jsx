@@ -31,14 +31,15 @@ const CandidateCard = ({ candidate, onDelete }) => {
                     className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 object-cover 
                              rounded-2xl ring-4 ring-gradient-to-r from-blue-400 to-indigo-500 
                              ring-offset-2 shadow-lg group-hover/photo:shadow-xl
-                             transition-all duration-300 group-hover/photo:scale-105"
+                             transition-all duration-300 group-hover/photo:scale-108"
                   />
                 ) : (
                   <div
                     className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 
                                 bg-gradient-to-br from-gray-100 to-gray-200 
                                 rounded-2xl flex items-center justify-center
-                                ring-4 ring-gray-300 ring-offset-2 shadow-lg"
+                                ring-4 ring-gray-300 ring-offset-2 shadow-lg
+                                transition-all duration-300 group-hover/photo:scale-108"
                   >
                     <User className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
                   </div>
@@ -63,14 +64,15 @@ const CandidateCard = ({ candidate, onDelete }) => {
                     className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 object-cover 
                              rounded-2xl ring-4 ring-gradient-to-r from-blue-400 to-indigo-500 
                              ring-offset-2 shadow-lg group-hover/photo:shadow-xl
-                             transition-all duration-300 group-hover/photo:scale-105"
+                             transition-all duration-300 group-hover/photo:scale-108"
                   />
                 ) : (
                   <div
                     className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 
                                 bg-gradient-to-br from-gray-100 to-gray-200 
                                 rounded-2xl flex items-center justify-center
-                                ring-4 ring-gray-300 ring-offset-2 shadow-lg"
+                                ring-4 ring-gray-300 ring-offset-2 shadow-lg
+                                transition-all duration-300 group-hover/photo:scale-108"
                   >
                     <User className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
                   </div>
@@ -98,7 +100,7 @@ const CandidateCard = ({ candidate, onDelete }) => {
               </h3>
               <div className="flex items-center mt-1">
                 <div className="h-0.5 w-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mr-3" />
-                <h4 className="text-lg lg:text-xl font-semibold text-gray-700">
+                <h4 className="text-lg lg:text-xl font-bold text-gray-700">
                   {candidate.nameWakil}
                 </h4>
               </div>
@@ -108,8 +110,8 @@ const CandidateCard = ({ candidate, onDelete }) => {
             <div className="space-y-4">
               {/* Vision Card */}
               <div
-                className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 
-                            border border-green-100 hover:border-green-200 transition-colors duration-300"
+                className="group bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4
+                            border border-green-100 hover:border-green-300 hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-start space-x-3">
                   <div
@@ -120,7 +122,7 @@ const CandidateCard = ({ candidate, onDelete }) => {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-green-800 mb-2">Visi</h4>
-                    <p className="text-sm lg:text-base text-green-700 leading-relaxed">
+                    <p className="text-sm lg:text-base text-green-700 leading-relaxed group-hover:text-green-800">
                       {candidate.visi}
                     </p>
                   </div>
@@ -129,8 +131,8 @@ const CandidateCard = ({ candidate, onDelete }) => {
 
               {/* Mission Card */}
               <div
-                className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 
-                            border border-blue-100 hover:border-blue-200 transition-colors duration-300"
+                className="group bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4
+                            border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-start space-x-3">
                   <div
@@ -141,7 +143,7 @@ const CandidateCard = ({ candidate, onDelete }) => {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-blue-800 mb-2">Misi</h4>
-                    <p className="text-sm lg:text-base text-blue-700 leading-relaxed">
+                    <p className="text-sm lg:text-base text-blue-700 leading-relaxed group-hover:text-blue-800">
                       {candidate.misi}
                     </p>
                   </div>
