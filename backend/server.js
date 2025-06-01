@@ -58,7 +58,7 @@ sequelize.sync({ alter: true }).then(async () => {
   //   const hashed = await bcrypt.hash("adminadmin", 10);
   //   await User.create({
   //     nim: "0101",
-  //     name: "john doe",
+  //     name: "afiq administrator",
   //     password: hashed,
   //     role: "admin",
   //   });

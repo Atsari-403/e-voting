@@ -27,11 +27,9 @@ const MahasiswaTable = ({
 
   // Menangani pengurutan
   const handleSort = (field) => {
-    // Jika field yang sama diklik, ubah arah pengurutan
     if (field === sortField) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      // Jika field berbeda, atur field baru dan arah ke ascending
       setSortField(field);
       setSortDirection("asc");
     }
@@ -56,7 +54,7 @@ const MahasiswaTable = ({
       }
       // Handle untuk kolom nama
       else if (sortField === "name") {
-        // Handle jika nama null atau undefined
+        // Handle null atau undefined
         const nameA = a.name || "";
         const nameB = b.name || "";
 
@@ -250,19 +248,19 @@ const MahasiswaTable = ({
 
                 {/* Page number buttons - show up to 5 pages */}
                 {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                  // Calculate page number for display
+                  
                   let pageNum;
                   if (totalPages <= 5) {
-                    // If 5 or fewer pages, show all
+                    
                     pageNum = i + 1;
                   } else if (currentPage <= 3) {
-                    // At beginning, show first 5
+                    
                     pageNum = i + 1;
                   } else if (currentPage >= totalPages - 2) {
-                    // At end, show last 5
+                    
                     pageNum = totalPages - 4 + i;
                   } else {
-                    // In middle, show current and 2 on each side
+                   
                     pageNum = currentPage - 2 + i;
                   }
 

@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false); // New state
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -47,7 +47,7 @@ export default function Login() {
       console.error("Login error:", error);
       setError("Terjadi kesalahan pada server");
     } finally {
-      setIsLoggingIn(false); // Set loading to false
+      setIsLoggingIn(false);
     }
   };
 

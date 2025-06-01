@@ -49,8 +49,10 @@ const useVotingResults = () => {
   useEffect(() => {
     fetchVoteResults();
 
-    // Polling setiap 30 detik untuk mendapatkan data terbaru
-    const interval = setInterval(fetchVoteResults, 30000);
+    // set interval
+    const interval = setInterval(() => {
+      fetchVoteResults();
+    }, 180000); 
 
     // Cleanup interval pada unmount
     return () => clearInterval(interval);

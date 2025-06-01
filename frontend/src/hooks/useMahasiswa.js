@@ -28,10 +28,10 @@ export const useMahasiswa = () => {
   useEffect(() => {
     fetchMahasiswas(); // Initial fetch
 
-    // Polling setiap 10 detik
+    // set interval 
     const interval = setInterval(() => {
       fetchMahasiswas();
-    }, 10000);
+    }, 180000);
 
     return () => clearInterval(interval);
   }, [fetchMahasiswas]);
