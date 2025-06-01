@@ -157,14 +157,8 @@ const AdminDashboardLayout = ({ children }) => {
           >
             {!collapsed ? (
               <div className="flex items-center">
-                <img
-                  src={Logo}
-                  alt="E-Voting Logo"
-                  className="h-10 w-10 "
-                />
-                <h2 className="ml-7 text-xl font-bold text-black">
-                  E-Voting
-                </h2>
+                <img src={Logo} alt="E-Voting Logo" className="h-10 w-10 " />
+                <h2 className="ml-7 text-xl font-bold text-black">E-Voting</h2>
               </div>
             ) : (
               <div className="flex justify-center w-full">

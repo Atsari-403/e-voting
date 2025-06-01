@@ -6,7 +6,9 @@ import Swal from "sweetalert2";
 // Fungsi untuk memeriksa koneksi server
 const checkServerConnection = async () => {
   try {
-    await axios.get("http://localhost:5000/api/candidates", { timeout: 3000 });
+    await axios.get("http://localhost:5000/api/candidates", {
+      timeout: 3000,
+    });
     return true;
   } catch (error) {
     console.error("Server tidak dapat dijangkau:", error);

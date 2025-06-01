@@ -296,9 +296,9 @@ const PhotoUpload = ({ designType, formData, previewUrls, onChange }) => {
           💡 Tips Upload Foto:
         </h4>
         <ul className="text-xs text-blue-700 space-y-1">
-          <li>• Format yang didukung: JPG, PNG, WebP</li>
-          <li>• Ukuran file maksimal 5MB per foto</li>
-          <li>• Pastikan foto terlihat jelas dan profesional</li>
+          <li>- Format yang didukung: JPG, PNG, WebP</li>
+          <li>- Ukuran file maksimal 5MB per foto</li>
+          <li>- Pastikan foto terlihat jelas</li>
         </ul>
       </div>
     </div>

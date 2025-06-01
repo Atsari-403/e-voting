@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const useVoteSubmission = (onVoteSuccess) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -9,7 +9,7 @@ const useVoteSubmission = (onVoteSuccess) => {
   const submitVote = async (candidateId, timeExpired) => {
     if (timeExpired) {
       setSubmissionError(
-        'Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi.'
+        "Waktu voting telah habis! Anda tidak dapat memilih kandidat lagi."
       );
       return;
     }
@@ -19,7 +19,7 @@ const useVoteSubmission = (onVoteSuccess) => {
 
     try {
       await axios.post(
-        'http://localhost:5000/api/users/vote-candidate',
+        "http://localhost:5000/api/users/vote-candidate",
         { candidateId },
         { withCredentials: true }
       );
@@ -29,14 +29,12 @@ const useVoteSubmission = (onVoteSuccess) => {
         setShowSuccessModal(false);
       }, 3000);
     } catch (err) {
-      console.error('Error submitting vote:', err);
+      console.error("Error submitting vote:", err);
       if (err.response?.data?.hasVoted) {
         onVoteSuccess(); // Ensure parent's hasVoted state is updated
       }
       setSubmissionError(
-        `Gagal melakukan voting: ${
-          err.response?.data?.message || err.message
-        }`
+        `Gagal melakukan voting: ${err.response?.data?.message || err.message}`
       );
     } finally {
       setIsSubmitting(false);
@@ -48,7 +46,7 @@ const useVoteSubmission = (onVoteSuccess) => {
     isSubmitting,
     submissionError,
     showSuccessModal,
-    setSubmissionError, 
+    setSubmissionError,
     setShowSuccessModal,
   };
 };

@@ -4,6 +4,7 @@ import Logo from "../assets/Logo.png";
 // import BgLogin from "../assets/bglogin.jpg";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Iridescence from "../../ReactBits/Iridescence/Iridescence";
+import { API_BASE_URL } from "../config/api";
 
 export default function Login() {
   const [nim, setNim] = useState("");
@@ -19,7 +20,7 @@ export default function Login() {
     setIsLoggingIn(true); // Set loading to true
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

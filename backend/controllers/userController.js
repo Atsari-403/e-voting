@@ -33,7 +33,7 @@ exports.addUser = async (req, res) => {
     delete userData.password;
 
     res.status(201).json({
-      message: "Mahasiswa berhasil ditambahkan",
+      message: "user berhasil ditambahkan",
       user: userData,
     });
   } catch (error) {
@@ -134,7 +134,7 @@ exports.updateUser = async (req, res) => {
 
     await user.update(updateData);
 
-    res.json({ message: "Data mahasiswa berhasil diperbarui" });
+    res.json({ message: "Data user berhasil diperbarui" });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -157,12 +157,12 @@ exports.deleteUser = async (req, res) => {
     }
 
     await user.destroy();
-    res.json({ message: "Mahasiswa berhasil dihapus" });
+    res.json({ message: "user berhasil dihapus" });
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Gagal menghapus mahasiswa", error: error.message });
+      .json({ message: "Gagal menghapus user", error: error.message });
   }
 };
 
