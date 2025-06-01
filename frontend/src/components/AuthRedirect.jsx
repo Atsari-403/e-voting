@@ -27,7 +27,7 @@ const AuthRedirect = ({ children }) => {
         //     ([key, value]) => `${key}: ${value}`
         //   ),
         // });
-        
+
         // console.log("Auth check response status:", response.status);
 
         if (response.status === 401) {

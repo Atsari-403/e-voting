@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const useMahasiswaCandidates = () => {
   const [candidates, setCandidates] = useState([]);
@@ -10,14 +10,17 @@ const useMahasiswaCandidates = () => {
     const fetchCandidates = async () => {
       setCandidatesLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/candidates', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/candidates",
+          {
+            withCredentials: true,
+          }
+        );
         setCandidates(response.data);
         setCandidatesError(null);
       } catch (error) {
-        console.error('Error fetching candidates:', error);
-        setCandidatesError('Gagal memuat data kandidat');
+        console.error("Error fetching candidates:", error);
+        setCandidatesError("Gagal memuat data kandidat");
       } finally {
         setCandidatesLoading(false);
       }

@@ -52,7 +52,7 @@ const useVotingResults = () => {
     // set interval
     const interval = setInterval(() => {
       fetchVoteResults();
-    }, 180000); 
+    }, 180000);
 
     // Cleanup interval pada unmount
     return () => clearInterval(interval);

@@ -45,7 +45,7 @@ export const useMahasiswa = () => {
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Mahasiswa berhasil ditambahkan",
+        text: "user berhasil ditambahkan",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -76,7 +76,7 @@ export const useMahasiswa = () => {
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Data mahasiswa berhasil diperbarui",
+        text: "Data user berhasil diperbarui",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -89,7 +89,7 @@ export const useMahasiswa = () => {
         text:
           error.response?.data?.message ||
           error.message ||
-          "Terjadi kesalahan saat mengedit mahasiswa",
+          "Terjadi kesalahan saat mengedit user",
         confirmButtonText: "OK",
         confirmButtonColor: "#d33",
       });
@@ -107,7 +107,7 @@ export const useMahasiswa = () => {
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Mahasiswa berhasil dihapus",
+        text: "user berhasil dihapus",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -120,7 +120,7 @@ export const useMahasiswa = () => {
         text:
           error.response?.data?.message ||
           error.message ||
-          "Terjadi kesalahan saat menghapus mahasiswa",
+          "Terjadi kesalahan saat menghapus user",
         confirmButtonText: "OK",
         confirmButtonColor: "#d33",
       });
@@ -137,7 +137,7 @@ export const useMahasiswa = () => {
       Swal.fire({
         icon: "success",
         title: "Import Berhasil!",
-        text: "Data mahasiswa berhasil diimpor dari Excel",
+        text: "Data user berhasil diimpor dari Excel",
         timer: 3000,
         showConfirmButton: false,
       });

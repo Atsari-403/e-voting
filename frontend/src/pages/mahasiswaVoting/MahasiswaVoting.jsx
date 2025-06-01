@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For handleLogout
 
 // Import Hooks
-import useUserData  from "../../hooks/useUserData";
+import useUserData from "../../hooks/useUserData";
 import useVotingTimer from "../../hooks/useVotingTimer";
 import useMahasiswaCandidates from "../../hooks/useMahasiswaCandidates";
-import useVoteSubmission  from "../../hooks/useVoteSubmission";
+import useVoteSubmission from "../../hooks/useVoteSubmission";
 
 // Import Components
 import Header from "../../components/user/Header";
@@ -45,10 +45,7 @@ const MahasiswaVoting = () => {
   }, [initialHasVoted]);
 
   const { formattedTime, timeExpired, timerError, setTimerError } =
-    useVotingTimer(
-      360, 
-      hasVoted
-    );
+    useVotingTimer(5, hasVoted);
 
   const {
     submitVote,
@@ -56,13 +53,12 @@ const MahasiswaVoting = () => {
     submissionError,
     showSuccessModal: voteSubmissionSuccessModal,
     setSubmissionError,
-    setShowSuccessModal: setShowVoteSubmissionSuccessModal, 
+    setShowSuccessModal: setShowVoteSubmissionSuccessModal,
   } = useVoteSubmission(() => {
     setHasVoted(true);
     setShowConfirmationModal(false);
   });
 
-  
   useEffect(() => {
     if (userError) setPageError(userError);
     else if (candidatesError) setPageError(candidatesError);
@@ -78,7 +74,6 @@ const MahasiswaVoting = () => {
     timeExpired,
   ]);
 
-  
   useEffect(() => {
     if (pageError !== userError && userError) setUserError(null);
     if (pageError !== candidatesError && candidatesError)
@@ -148,7 +143,7 @@ const MahasiswaVoting = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "http://localhost:5000/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -213,7 +208,7 @@ const MahasiswaVoting = () => {
       <ConfirmationModal
         show={showConfirmationModal}
         candidate={selectedCandidate}
-        candidates={candidates} 
+        candidates={candidates}
         onClose={() => setShowConfirmationModal(false)}
         onConfirm={handleConfirmVote}
       />

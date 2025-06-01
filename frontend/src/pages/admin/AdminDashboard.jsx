@@ -158,9 +158,8 @@ const AdminDashboard = () => {
       fetchDashboardData();
     }, 10000);
 
-    
     return () => clearInterval(interval);
-  }, []); 
+  }, []);
 
   // Enhanced loading state
   if (loading) {

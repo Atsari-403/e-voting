@@ -4,7 +4,7 @@ const DeleteConfirmation = ({ onClose, onDelete }) => {
   return (
     <div>
       <p className="mb-4 text-gray-700">
-        Apakah Anda yakin ingin menghapus mahasiswa ini?
+        Apakah Anda yakin ingin menghapus user ini?
       </p>
       <div className="flex justify-end space-x-2">
         <button
