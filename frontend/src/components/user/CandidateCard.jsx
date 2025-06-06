@@ -77,7 +77,7 @@ const CandidateCard = ({
                 e.target.src = '/placeholder-ketua.png';
               }}
             />
-            <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-whitexs px-2 py-1 rounded-bl-md font-medium text-xs">
+            <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-white xs px-2 py-1 rounded-bl-md font-medium text-xs">
               Ketua
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>

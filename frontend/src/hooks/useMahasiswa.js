@@ -31,8 +31,7 @@ export const useMahasiswa = () => {
     // set interval 
     const interval = setInterval(() => {
       fetchMahasiswas();
-    }, 180000);
-
+    }, 60000); // 60 seconds 
     return () => clearInterval(interval);
   }, [fetchMahasiswas]);
 

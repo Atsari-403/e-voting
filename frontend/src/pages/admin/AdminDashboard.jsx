@@ -63,7 +63,7 @@ const VotingStats = ({ sudahVoting, totalMahasiswa }) => {
           </div>
           <h2 className="font-bold text-xl">Statistik Partisipasi</h2>
         </div>
-        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
+        <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-semibold flex items-center justify-center text-center whitespace-nowrap">
           Live Stats
         </span>
       </div>

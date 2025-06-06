@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Fungsi registrasi
+// Fungsi untuk login
 exports.login = async (req, res) => {
   try {
     const { nim, password } = req.body;

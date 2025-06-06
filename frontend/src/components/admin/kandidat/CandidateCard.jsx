@@ -51,11 +51,11 @@ const CandidateCard = ({ candidate, onDelete }) => {
                 {/* Enhanced badge */}
                 <div
                   className="absolute -bottom-1 -right-1 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-600 
-                              text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg
-                              border-3 border-white"
+                text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg
+                border-3 border-white flex items-center justify-center"
                 >
-                  <Award className="w-3 h-3 inline mr-1" />
-                  Ketua
+                  <Award className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>Ketua</span>
                 </div>
               </div>
             </div>
@@ -95,11 +95,11 @@ const CandidateCard = ({ candidate, onDelete }) => {
                 {/* Enhanced badge */}
                 <div
                   className="absolute -bottom-1 -right-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 
-                              text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg
-                              border-3 border-white"
+                text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg
+                border-3 border-white flex items-center justify-center"
                 >
-                  <Users className="w-3 h-3 inline mr-1" />
-                  Wakil
+                  <Users className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>Wakil</span>
                 </div>
               </div>
             </div>
@@ -126,29 +126,33 @@ const CandidateCard = ({ candidate, onDelete }) => {
             </div>
 
             {/* Enhanced Vision & Mission Cards */}
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {/* Enhanced Vision Card */}
               <div
-                className="group bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-2xl p-5 
-                            border border-emerald-200 hover:border-emerald-400 hover:shadow-lg 
-                            transition-all duration-300 relative overflow-hidden"
+                className="group bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-2xl p-4 sm:p-5 
+                  border border-emerald-200 hover:border-emerald-400 hover:shadow-lg 
+                  transition-all duration-300 relative overflow-hidden"
               >
                 {/* Card background pattern */}
                 <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-emerald-200/30 to-transparent rounded-full blur-xl" />
 
-                <div className="flex items-start space-x-4 relative">
+                <div className="flex items-start space-x-3 sm:space-x-4 relative">
                   <div
-                    className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 
-                                rounded-xl flex items-center justify-center shadow-lg
-                                transition-all duration-300"
+                    className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 
+                      rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg
+                      transition-all duration-300 mt-0.5"
                   >
-                    <Eye className="w-5 h-5 text-white" />
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-emerald-800 mb-3 text-lg">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-emerald-800 mb-2 sm:mb-3 text-base sm:text-lg">
                       Visi
                     </h4>
-                    <p className="text-base text-emerald-700 leading-relaxed group-hover:text-emerald-800 transition-colors duration-300">
+                    <p
+                      className="text-sm sm:text-base text-emerald-700 leading-relaxed sm:leading-relaxed 
+                      group-hover:text-emerald-800 transition-colors duration-300
+                      break-words hyphens-auto"
+                    >
                       {candidate.visi}
                     </p>
                   </div>
@@ -157,47 +161,52 @@ const CandidateCard = ({ candidate, onDelete }) => {
 
               {/* Enhanced Mission Card */}
               <div
-                className="group bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-5 
-                            border border-blue-200 hover:border-blue-400 hover:shadow-lg 
-                            transition-all duration-300 relative overflow-hidden"
+                className="group bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4 sm:p-5 
+                  border border-blue-200 hover:border-blue-400 hover:shadow-lg 
+                  transition-all duration-300 relative overflow-hidden"
               >
                 {/* Card background pattern */}
                 <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full blur-xl" />
 
-                <div className="flex items-start space-x-4 relative">
+                <div className="flex items-start space-x-3 sm:space-x-4 relative">
                   <div
-                    className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 
-                                rounded-xl flex items-center justify-center shadow-lg
-                                transition-all duration-300"
+                    className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 
+                      rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg
+                      transition-all duration-300 mt-0.5"
                   >
-                    <Target className="w-5 h-5 text-white" />
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-blue-800 mb-3 text-lg">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-blue-800 mb-2 sm:mb-3 text-base sm:text-lg">
                       Misi
                     </h4>
-                    <p className="text-base text-blue-700 leading-relaxed group-hover:text-blue-800 transition-colors duration-300">
+                    <p
+                      className="text-sm sm:text-base text-blue-700 leading-relaxed sm:leading-relaxed 
+                      group-hover:text-blue-800 transition-colors duration-300
+                      break-words hyphens-auto"
+                    >
                       {candidate.misi}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-
             {/* Enhanced Delete Button */}
-            <div className="flex justify-center lg:justify-end pt-4">
+            <div className="flex justify-center lg:justify-end pt-3 sm:pt-4 px-2 sm:px-0">
               <button
                 onClick={handleDelete}
-                className="group/btn inline-flex items-center px-6 py-3 
-                         bg-gradient-to-r from-red-50 via-pink-50 to-rose-50 
-                         border-2 border-red-200 rounded-2xl
-                         text-red-600 font-semibold text-sm
-                         hover:from-red-500 hover:via-pink-500 hover:to-rose-500 hover:text-white
-                         hover:border-red-500 hover:shadow-lg
-                         transform hover:scale-105 transition-all duration-300
-                         focus:outline-none focus:ring-4 focus:ring-red-200/50"
+                className="group/btn inline-flex items-center px-5 sm:px-6 py-2.5 sm:py-3 
+             bg-gradient-to-r from-red-50 via-pink-50 to-rose-50 
+             border-2 border-red-200 rounded-xl sm:rounded-2xl
+             text-red-600 font-semibold text-sm
+             hover:from-red-500 hover:via-pink-500 hover:to-rose-500 hover:text-white
+             hover:border-red-500 hover:shadow-lg
+             transform hover:scale-[1.02] sm:hover:scale-105 active:scale-95 
+             transition-all duration-300
+             focus:outline-none focus:ring-4 focus:ring-red-200/50
+             min-h-[44px] touch-manipulation shadow-sm"
               >
-                <Trash2 className="w-5 h-5 mr-2" />
+                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0" />
                 <span>Hapus Kandidat</span>
               </button>
             </div>

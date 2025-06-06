@@ -4,7 +4,7 @@ import axios from "axios"; // For handleLogout
 
 // Import Hooks
 import useUserData from "../../hooks/useUserData";
-import useVotingTimer from "../../hooks/useVotingTimer";
+import useVotingTimer, { VOTING_DURATIONS } from "../../hooks/useVotingTimer";
 import useMahasiswaCandidates from "../../hooks/useMahasiswaCandidates";
 import useVoteSubmission from "../../hooks/useVoteSubmission";
 
@@ -45,7 +45,7 @@ const MahasiswaVoting = () => {
   }, [initialHasVoted]);
 
   const { formattedTime, timeExpired, timerError, setTimerError } =
-    useVotingTimer(5, hasVoted);
+    useVotingTimer(VOTING_DURATIONS.FIFTEEN_MINUTES, hasVoted);
 
   const {
     submitVote,
@@ -143,7 +143,7 @@ const MahasiswaVoting = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/logout",
+        "http://localhost:5000/api/auth/logout",
         {},
         { withCredentials: true }
       );

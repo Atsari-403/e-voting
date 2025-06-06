@@ -45,7 +45,7 @@ const AuthRedirect = ({ children }) => {
         }
 
         const user = await response.json();
-        console.log("User data:", user);
+        // console.log("User data:", user);
 
         if (!user) {
           setIsAuthenticated(false);

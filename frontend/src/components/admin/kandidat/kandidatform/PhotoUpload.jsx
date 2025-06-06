@@ -147,7 +147,7 @@ const PhotoUpload = ({ designType, formData, previewUrls, onChange }) => {
                 >
                   {previewUrls.fotoPamflet
                     ? "Klik untuk ganti foto"
-                    : "Klik atau drag foto di sini"}
+                    : "Klik untuk unggah foto di sini"}
                 </span>
               </div>
             </div>
