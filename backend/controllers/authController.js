@@ -29,7 +29,7 @@ exports.login = async (req, res) => {
       maxAge: 3600000, // 1 jam
       secure: process.env.NODE_ENV === "production", // set scure di production
       sameSite: "Strict", // SameSite untuk mencegah CSRF
-      // SameSite: "Lax", // Jika menggunakan frontend di domain yang berbeda
+      // SameSite: "Lax", // frontend di domain yang berbeda
       path: "/",
       domain: undefined,
     });

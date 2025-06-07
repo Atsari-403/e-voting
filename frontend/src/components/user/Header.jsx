@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/Logo.png'; // Adjust the path as necessary
+import logo from '../../assets/Logo.png';
 import { Clock, LogOut } from 'lucide-react';
 
 const Header = ({ userData, formattedTime, timeExpired, hasVoted, onLogout }) => {
@@ -10,7 +10,7 @@ const Header = ({ userData, formattedTime, timeExpired, hasVoted, onLogout }) =>
           <img src={logo} alt="E-Voting Logo" className="h-8 sm:h-10" />
           <div className="flex flex-col">
             <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
-              E-Voting Mahasiswa
+              E-Voting
             </h1>
             {userData && (
               <span className="text-xs text-gray-500">

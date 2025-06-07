@@ -16,7 +16,7 @@ const PageTitle = ({ formattedTime, hasVoted, timeExpired }) => {
           yang lebih baik
         </p>
 
-        {/* Countdown timer display for visual emphasis */}
+        {/* Countdown timer */}
         {!hasVoted && !timeExpired && (
           <div className="mt-3 sm:mt-4 ml-4 inline-flex items-center bg-blue-50 px-2 sm:px-3 py-1 rounded-full border border-blue-100">
             <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mr-1 sm:mr-2" />

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 
-const ProtectedRoute = ({ children, roleAllowed }) => {
+const ProtectedRoute = ({ children, roleAllowed, blockNavigation = false }) => {
   const { updateUser } = useUser();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,6 +42,62 @@ const ProtectedRoute = ({ children, roleAllowed }) => {
 
     checkAuth();
   }, []);
+
+  // Navigation blocking effect
+  useEffect(() => {
+    if (!blockNavigation || isLoading || !isAuthenticated) return;
+
+    const currentPath = location.pathname;
+
+    // Flood history stack dengan banyak entry untuk block back button
+    for (let i = 0; i < 50; i++) {
+      window.history.pushState(
+        { protectedPage: true, index: i },
+        "",
+        currentPath
+      );
+    }
+
+    const blockBack = (event) => {
+      // mencegah back button
+      event.preventDefault();
+
+      // Push state lagi untuk memastikan tetap terkunci
+      window.history.pushState(
+        { protectedPage: true, blocked: true },
+        "",
+        currentPath
+      );
+
+      // Force navigate ke halaman yang sama jika ada yang bypass
+      if (window.location.pathname !== currentPath) {
+        navigate(currentPath, { replace: true });
+      }
+    };
+
+    const handleBeforeUnload = (event) => {
+      // Warning saat user coba close tab/refresh
+      event.preventDefault();
+      event.returnValue = "Apakah Anda yakin ingin meninggalkan halaman ini?";
+      return event.returnValue;
+    };
+
+    // Event listeners
+    window.addEventListener("popstate", blockBack);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener("popstate", blockBack);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [
+    blockNavigation,
+    isLoading,
+    isAuthenticated,
+    location.pathname,
+    navigate,
+  ]);
 
   // loading spinner
   if (isLoading) {

@@ -40,7 +40,7 @@ const ConfirmationModal = ({
             <div className="font-medium text-gray-800 flex items-center">
               <Award className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 mr-2" />
               <span>
-                Pasangan #{pairNumber} - {candidate.nameKetua} &{' '}
+                Pasangan No {pairNumber} - {candidate.nameKetua} &{' '}
                 {candidate.nameWakil}
               </span>
             </div>

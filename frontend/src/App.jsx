@@ -62,10 +62,11 @@ function App() {
           }
         />
 
+        {/* Route voting mahasiswa - redirect jika bukan mahasiswa */}
         <Route
           path="/mahasiswa/voting"
           element={
-            <ProtectedRoute roleAllowed="mahasiswa">
+            <ProtectedRoute roleAllowed="mahasiswa" blockNavigation={true}>
               <MahasiswaVoting />
             </ProtectedRoute>
           }

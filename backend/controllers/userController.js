@@ -103,12 +103,12 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: "Mahasiswa tidak ditemukan" });
     }
 
-    // Check if new NIM is already used by another user
+    // Cek apakah NIM sudah terdaftar untuk mahasiswa lain
     if (nim && nim !== user.nim) {
       const existingUser = await User.findOne({
         where: {
           nim,
-          id: { [Op.ne]: userId }, // Exclude current user
+          id: { [Op.ne]: userId }, // tidak termasuk user yang sedang diupdate
         },
       });
       if (existingUser) {
@@ -118,10 +118,10 @@ exports.updateUser = async (req, res) => {
       }
     }
 
-    // Prepare update data
+    // Update data
     const updateData = { name };
 
-    // Add NIM if provided
+    // tambah NIM jika ada
     if (nim) {
       updateData.nim = nim;
     }

@@ -50,7 +50,7 @@ app.use("/api/candidates", candidateRoutes);
 
 // Sync DB dan admin default
 sequelize.sync({ alter: true }).then(async () => {
-  // console.log("Database connected & synced");
+  console.log("Koneksi ke database berhasil");
 
   // const adminExists = await User.findOne({ where: { nim: "0101" } });
   // if (!adminExists) {
@@ -58,11 +58,11 @@ sequelize.sync({ alter: true }).then(async () => {
   //   const hashed = await bcrypt.hash("adminadmin", 10);
   //   await User.create({
   //     nim: "0101",
-  //     name: "afiq administrator",
+  //     name: "administrator",
   //     password: hashed,
   //     role: "admin",
   //   });
-  //   console.log("Admin default dibuat (nim: 0101, password: adminadmin)");
+  //   console.log("Admin default dibuat nim: 0101, password: adminadmin");
   // }
 
   // add mahasiswa default

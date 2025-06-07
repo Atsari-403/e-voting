@@ -26,7 +26,7 @@ const CandidateCard = ({
 
   return (
     <div
-      key={candidate.id} // key is used by React, not needed as prop for the component itself
+      key={candidate.id}
       className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 transform ${
         canVote ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer' : ''
       }`}
@@ -37,7 +37,7 @@ const CandidateCard = ({
         <div className="bg-white shadow-md rounded-full px-2 sm:px-3 py-1 flex items-center space-x-1">
           <Star className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-500 fill-yellow-500" />
           <span className="text-xs font-bold text-gray-800">
-            Pasangan #{index + 1}
+            Pasangan No {index + 1}
           </span>
         </div>
       </div>

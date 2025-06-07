@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filter file - hanya terima file Excel
+// hanya terima file Excel
 const fileFilter = (req, file, cb) => {
   const allowedFileTypes = [".xlsx", ".xls"];
   const extname = path.extname(file.originalname).toLowerCase();

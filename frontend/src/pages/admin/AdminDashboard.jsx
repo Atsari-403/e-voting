@@ -247,9 +247,12 @@ const AdminDashboard = () => {
 
         {/* Last Update */}
         {lastUpdate && (
-          <div className="inline-flex items-center text-sm text-amber-800 bg-gradient-to-r from-amber-200 to-yellow-200 px-4 py-3 rounded-xl shadow-lg border border-amber-300">
-            <RefreshCw size={16} className="mr-2 text-amber-600" />
-            Terakhir diperbarui: {lastUpdate}
+          <div className="inline-flex items-center text-xs sm:text-sm text-amber-800 bg-gradient-to-r from-amber-200 to-yellow-200 px-2 sm:px-4 py-2 sm:py-3 rounded-xl shadow-lg border border-amber-300">
+            <RefreshCw
+              size={14}
+              className="mr-1 sm:mr-2 text-amber-600 sm:size-4"
+            />
+            <span className="truncate">Terakhir diperbarui: {lastUpdate}</span>
           </div>
         )}
       </div>
