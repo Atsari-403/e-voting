@@ -148,6 +148,8 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
+
+    // Cari user yang akan dihapus
     const user = await User.findOne({
       where: { id: userId, role: "mahasiswa" },
     });
@@ -156,17 +158,34 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ message: "Mahasiswa tidak ditemukan" });
     }
 
+    // cegah hapus user yang sudah melakukan voting
+    if (user.hasVoted) {
+      return res.status(400).json({
+        message:
+          "Tidak dapat menghapus mahasiswa yang sudah melakukan voting",
+        reason: "USER_ALREADY_VOTED",
+      });
+    }
+
+    // Hapus user yang belum vote
     await user.destroy();
-    res.json({ message: "user berhasil dihapus" });
+
+    res.json({
+      message: "User berhasil dihapus",
+    });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Gagal menghapus user", error: error.message });
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      message: "Gagal menghapus user",
+      error: error.message,
+    });
   }
 };
 
+
 exports.importUsers = async (req, res) => {
+  const batchSize = 50; // Proses 50 user per batch
+
   try {
     const users = req.body.users;
 
@@ -176,7 +195,11 @@ exports.importUsers = async (req, res) => {
       });
     }
 
+    // Validasi awal dan cleaning data
+    const validUsers = [];
     const results = [];
+
+    console.log(`Memulai validasi untuk ${users.length} pengguna...`);
 
     for (const user of users) {
       const nim = String(user.nim).trim();
@@ -188,30 +211,324 @@ exports.importUsers = async (req, res) => {
         continue;
       }
 
-      const existing = await User.findOne({ where: { nim } });
-      if (existing) {
-        results.push({ nim, status: "Duplikat - dilewati" });
-        continue;
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await User.create({
-        nim,
-        name,
-        password: hashedPassword,
-        role: "mahasiswa",
-      });
-
-      results.push({ nim, status: "Berhasil ditambahkan" });
+      validUsers.push({ nim, name, password });
     }
 
-    res.json({ message: "Import selesai", results });
+    console.log(
+      `${validUsers.length} pengguna valid dari ${users.length} total`
+    );
+
+    // Cek duplikat di database sekaligus
+    const existingNims = validUsers.map((user) => user.nim);
+    const existingUsers = await User.findAll({
+      where: { nim: { [Op.in]: existingNims } },
+      attributes: ["nim"],
+    });
+
+    const existingNimSet = new Set(existingUsers.map((user) => user.nim));
+
+    // Filter user yang belum ada di database
+    const newUsers = validUsers.filter((user) => {
+      if (existingNimSet.has(user.nim)) {
+        results.push({ nim: user.nim, status: "Duplikat - dilewati" });
+        return false;
+      }
+      return true;
+    });
+
+    console.log(`${newUsers.length} pengguna baru akan ditambahkan`);
+
+    if (newUsers.length === 0) {
+      return res.json({
+        message: "Import selesai - tidak ada data baru yang ditambahkan",
+        results,
+      });
+    }
+
+    // Proses dalam batch dengan progress tracking
+    const totalBatches = Math.ceil(newUsers.length / batchSize);
+    let processedCount = 0;
+
+    for (let i = 0; i < totalBatches; i++) {
+      const startIndex = i * batchSize;
+      const endIndex = Math.min(startIndex + batchSize, newUsers.length);
+      const batch = newUsers.slice(startIndex, endIndex);
+
+      console.log(
+        `Memproses batch ${i + 1}/${totalBatches} (${batch.length} pengguna)...`
+      );
+
+      // Hash password untuk seluruh batch
+      const hashedBatch = await Promise.all(
+        batch.map(async (user) => ({
+          nim: user.nim,
+          name: user.name,
+          password: await bcrypt.hash(user.password, 10),
+          role: "mahasiswa",
+        }))
+      );
+
+      try {
+        // Bulk create untuk batch ini
+        const createdUsers = await User.bulkCreate(hashedBatch, {
+          ignoreDuplicates: true,
+          returning: true,
+        });
+
+        // Update results
+        batch.forEach((user, index) => {
+          if (createdUsers[index]) {
+            results.push({ nim: user.nim, status: "Berhasil ditambahkan" });
+            processedCount++;
+          } else {
+            results.push({ nim: user.nim, status: "Gagal ditambahkan" });
+          }
+        });
+
+        // Progress log
+        const progress = Math.round(((i + 1) / totalBatches) * 100);
+        console.log(
+          `Progress: ${progress}% - ${processedCount} pengguna berhasil ditambahkan`
+        );
+      } catch (batchError) {
+        console.error(`Error pada batch ${i + 1}:`, batchError);
+
+        // Fallback: proses satu per satu untuk batch yang gagal
+        for (const user of batch) {
+          try {
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            await User.create({
+              nim: user.nim,
+              name: user.name,
+              password: hashedPassword,
+              role: "mahasiswa",
+            });
+            results.push({ nim: user.nim, status: "Berhasil ditambahkan" });
+            processedCount++;
+          } catch (individualError) {
+            console.error(`Error untuk NIM ${user.nim}:`, individualError);
+            results.push({
+              nim: user.nim,
+              status: "Gagal ditambahkan - " + individualError.message,
+            });
+          }
+        }
+      }
+
+      // Small delay untuk mencegah overload database
+      if (i < totalBatches - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+
+    console.log(
+      `Import selesai: ${processedCount}/${newUsers.length} pengguna berhasil ditambahkan`
+    );
+
+    res.json({
+      message: `Import selesai - ${processedCount} pengguna berhasil ditambahkan`,
+      results,
+      summary: {
+        total: users.length,
+        valid: validUsers.length,
+        duplicates: existingUsers.length,
+        added: processedCount,
+        failed: newUsers.length - processedCount,
+      },
+    });
   } catch (error) {
     console.error("Gagal import Excel:", error);
-    res
-      .status(500)
-      .json({ message: "Gagal import Excel", error: error.message });
+    res.status(500).json({
+      message: "Gagal import Excel",
+      error: error.message,
+    });
   }
+};
+
+// Versi dengan Server-Sent Events untuk real-time progress
+exports.importUsersWithProgress = async (req, res) => {
+  const batchSize = 50;
+
+  // Set headers untuk Server-Sent Events
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    "Access-Control-Allow-Origin": "*",
+  });
+
+  const sendProgress = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    const users = req.body.users;
+
+    if (!users || users.length === 0) {
+      sendProgress({
+        type: "error",
+        message: "Data pengguna dari file Excel kosong atau tidak valid.",
+      });
+      return res.end();
+    }
+
+    sendProgress({
+      type: "progress",
+      stage: "validation",
+      message: `Memvalidasi ${users.length} pengguna...`,
+      progress: 0,
+    });
+
+    // Validasi data (sama seperti sebelumnya)
+    const validUsers = [];
+    const results = [];
+
+    for (const user of users) {
+      const nim = String(user.nim).trim();
+      const name = user.name?.trim();
+      const password = user.password?.trim();
+
+      if (!nim || !name || !password) {
+        results.push({ nim, status: "Data tidak lengkap - dilewati" });
+        continue;
+      }
+      validUsers.push({ nim, name, password });
+    }
+
+    sendProgress({
+      type: "progress",
+      stage: "duplicate_check",
+      message: `Memeriksa duplikat untuk ${validUsers.length} pengguna valid...`,
+      progress: 20,
+    });
+
+    // Cek duplikat
+    const existingNims = validUsers.map((user) => user.nim);
+    const existingUsers = await User.findAll({
+      where: { nim: { [Op.in]: existingNims } },
+      attributes: ["nim"],
+    });
+
+    const existingNimSet = new Set(existingUsers.map((user) => user.nim));
+    const newUsers = validUsers.filter((user) => {
+      if (existingNimSet.has(user.nim)) {
+        results.push({ nim: user.nim, status: "Duplikat - dilewati" });
+        return false;
+      }
+      return true;
+    });
+
+    if (newUsers.length === 0) {
+      sendProgress({
+        type: "complete",
+        message: "Import selesai - tidak ada data baru",
+        results,
+        progress: 100,
+      });
+      return res.end();
+    }
+
+    sendProgress({
+      type: "progress",
+      stage: "importing",
+      message: `Mengimpor ${newUsers.length} pengguna baru...`,
+      progress: 30,
+    });
+
+    // Proses batch dengan progress update
+    const totalBatches = Math.ceil(newUsers.length / batchSize);
+    let processedCount = 0;
+
+    for (let i = 0; i < totalBatches; i++) {
+      const startIndex = i * batchSize;
+      const endIndex = Math.min(startIndex + batchSize, newUsers.length);
+      const batch = newUsers.slice(startIndex, endIndex);
+
+      // Hash passwords
+      const hashedBatch = await Promise.all(
+        batch.map(async (user) => ({
+          nim: user.nim,
+          name: user.name,
+          password: await bcrypt.hash(user.password, 10),
+          role: "mahasiswa",
+        }))
+      );
+
+      try {
+        const createdUsers = await User.bulkCreate(hashedBatch, {
+          ignoreDuplicates: true,
+          returning: true,
+        });
+
+        batch.forEach((user, index) => {
+          if (createdUsers[index]) {
+            results.push({ nim: user.nim, status: "Berhasil ditambahkan" });
+            processedCount++;
+          }
+        });
+
+        const progress = 30 + Math.round(((i + 1) / totalBatches) * 60);
+        sendProgress({
+          type: "progress",
+          stage: "importing",
+          message: `Batch ${
+            i + 1
+          }/${totalBatches} selesai - ${processedCount} pengguna ditambahkan`,
+          progress,
+          processed: processedCount,
+          total: newUsers.length,
+        });
+      } catch (batchError) {
+        sendProgress({
+          type: "warning",
+          message: `Error pada batch ${i + 1}, mencoba satu per satu...`,
+        });
+
+        // Fallback processing
+        for (const user of batch) {
+          try {
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            await User.create({
+              nim: user.nim,
+              name: user.name,
+              password: hashedPassword,
+              role: "mahasiswa",
+            });
+            results.push({ nim: user.nim, status: "Berhasil ditambahkan" });
+            processedCount++;
+          } catch (individualError) {
+            results.push({
+              nim: user.nim,
+              status: "Gagal - " + individualError.message,
+            });
+          }
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    sendProgress({
+      type: "complete",
+      message: `Import selesai - ${processedCount}/${newUsers.length} pengguna berhasil ditambahkan`,
+      results,
+      summary: {
+        total: users.length,
+        valid: validUsers.length,
+        duplicates: existingUsers.length,
+        added: processedCount,
+        failed: newUsers.length - processedCount,
+      },
+      progress: 100,
+    });
+  } catch (error) {
+    sendProgress({
+      type: "error",
+      message: "Gagal import Excel: " + error.message,
+    });
+  }
+
+  res.end();
 };
 
 exports.voteCandidate = async (req, res) => {

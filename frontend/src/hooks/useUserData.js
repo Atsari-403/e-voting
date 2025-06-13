@@ -17,6 +17,7 @@ const useUserData = () => {
         const response = await axios.get("http://localhost:5000/api/auth/me", {
           withCredentials: true,
         });
+        
         setUserData(response.data);
         updateUser(response.data);
         setHasVoted(response.data.hasVoted);

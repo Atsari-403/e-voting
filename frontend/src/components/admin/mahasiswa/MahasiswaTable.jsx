@@ -208,7 +208,7 @@ const MahasiswaTable = ({
                 <div className="flex flex-col items-center">
                   <p className="text-base">
                     {searchTerm
-                      ? "Tidak ada mahasiswa yang sesuai dengan pencarian"
+                      ? "Tidak ada mahasiswa yang cocok dengan pencarian"
                       : "Belum ada data mahasiswa"}
                   </p>
                 </div>

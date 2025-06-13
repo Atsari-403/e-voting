@@ -1,6 +1,20 @@
 import React from "react";
 
 const DeleteConfirmation = ({ onClose, onDelete }) => {
+  const handleDelete = async () => {
+    try {
+      await onDelete();
+      onClose();
+    } catch (error) {
+      if (error.response?.data?.reason === "USER_ALREADY_VOTED") {
+        alert("Tidak dapat menghapus mahasiswa yang sudah voting");
+        return;
+      }
+      console.error("Error deleting user:", error);
+      alert("Gagal menghapus pengguna");
+    }
+  };
+
   return (
     <div>
       <p className="mb-4 text-gray-700">
@@ -14,7 +28,7 @@ const DeleteConfirmation = ({ onClose, onDelete }) => {
           Batal
         </button>
         <button
-          onClick={onDelete}
+          onClick={handleDelete}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
         >
           Hapus
